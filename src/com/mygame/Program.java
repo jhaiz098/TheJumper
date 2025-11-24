@@ -17,20 +17,16 @@ public class Program extends JPanel {
 		
 		player = new Player(0, 0, "/resources/sprites/knight.png");
 		
-		lastTime = System.nanoTime();
+		final double dt = 1.0/60.0;
 		
 		new Thread(() -> {
 			
 			while(true) {
 				
-				long now = System.nanoTime();
-				double deltaTime = (now - lastTime) / 1_000_000_000.0;
-				lastTime = now;
-				
-				player.update(deltaTime);
+				player.update(dt);
 				repaint();
 				
-				try { Thread.sleep(1); } catch (Exception e) {}
+				try { Thread.sleep(16); } catch (Exception e) {}
 			}
 		}).start();
 	}

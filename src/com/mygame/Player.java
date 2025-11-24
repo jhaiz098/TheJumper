@@ -11,13 +11,14 @@ import java.awt.Rectangle;
 public class Player {
 	
 	private int x, y;
-	private float veloX, veloY;
+	private float veloX, veloY = 0;
 	private float speed = 5;
 	private boolean isJumping;
 	
-	private final float GRAVITY = 9.18f * 100;
-	private final int JUMP_STRENGTH = -15;
+	private final float GRAVITY = 900f;
+	private final int JUMP_STRENGTH = -450;
 	private final int GROUND_LEVEL = 500;
+	private final float MAX_FALL_SPEED = 500f;
 	
 	private BufferedImage spriteSheet;
 	private BufferedImage currentFrame;
@@ -53,9 +54,14 @@ public class Player {
 	}
 	
 	public void update(double dt) {
+		
         // apply gravity
         veloY += GRAVITY * dt;
-
+        
+        if (veloY > MAX_FALL_SPEED) {
+        	veloY = MAX_FALL_SPEED;
+        }
+        
         // update pos
         x += veloX * dt;
         y += veloY * dt;
