@@ -118,7 +118,7 @@ public class Program extends JPanel {
     }
 
     public static void main(String[] args) {
-        JFrame window = new JFrame("The Jumper - Camera Example");
+        JFrame window = new JFrame("The Jumper");
         Program panel = new Program();
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
