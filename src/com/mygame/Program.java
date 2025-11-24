@@ -1,131 +1,133 @@
 package com.mygame;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.Dimension;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.List;
 import java.util.ArrayList;
-import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class Program extends JPanel {
 
-	private Player player;
-	private boolean leftPressed = false;
-	private boolean rightPressed = false;
-	
-	
-	private BufferedImage[] tileImages;
-	private List<Tile> map = new ArrayList<>();
-	
-	private final int[][] level = {
-	        {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25},
-	        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	        {0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	        {0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-	        {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-	    };
-	
-	public Program() {
-		setPreferredSize(new Dimension(800,600));
-		setBackground(Color.CYAN);
-		
-		player = new Player(0, 0, "/resources/sprites/knight.png");
-		
-		tileImages = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
-		
-		if (tileImages != null) {
-		    for (int row = 0; row < level.length; row++) {
-		        for (int col = 0; col < level[row].length; col++) {
-		            int tileIndex = level[row][col];
-		            if (tileIndex > 0) {
-		                boolean solid = (tileIndex == 1); // only tile type 1 is solid
-		                map.add(new Tile(col * 16 * Tile.SCALE, row * 16 * Tile.SCALE, tileImages[tileIndex - 1], solid));
-		            }
-		        }
-		    }
-		}
-		
-		final double dt = 1.0/60.0;
-		
-		new Thread(() -> {
-			
-			while(true) {
-				
-				player.update(dt, map);
-				repaint();
-				
-				try { Thread.sleep(16); } catch (Exception e) {}
-			}
-		}).start();
-		
-		addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				switch(e.getKeyCode()) {
-					case KeyEvent.VK_LEFT -> leftPressed = true;
-					case KeyEvent.VK_RIGHT -> rightPressed = true;
-					case KeyEvent.VK_SPACE -> player.jump();
-				}
-				updatePlayerVelocity();
-			}
-			
-			@Override
-			public void keyReleased(KeyEvent e) {
-				switch(e.getKeyCode()) {
-				case KeyEvent.VK_LEFT -> leftPressed = false;
-				case KeyEvent.VK_RIGHT -> rightPressed = false;
-				}
-				updatePlayerVelocity();
-			}
-			
-			private void updatePlayerVelocity() {
-				if (leftPressed && !rightPressed) {
-		            player.moveLeft();
-		        } else if (rightPressed && !leftPressed) {
-		            player.moveRight();
-		        } else {
-		            player.stop();
-		        }
-			}
-		});
-		
-		setFocusable(true);
-	}
-	
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		
-		for (Tile t : map) {
-			t.draw(g);
-		}
-		
-		player.draw(g);
-		
-	}
-	
-	
-	public static void main(String[] args) {
-		JFrame window = new JFrame("The Jumper");
-		Program panel = new Program();
-		
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.add(panel);
-		window.pack();
-		window.setLocationRelativeTo(null);
-        window.setResizable(false);
-		window.setVisible(true);
-	}
+    private Player player;
+    private List<Tile> map = new ArrayList<>();
+    private BufferedImage[] tiles;
 
+    private boolean leftPressed = false;
+    private boolean rightPressed = false;
+
+    private int camX = 0;
+    private int camY = 0;
+
+    private static final int PANEL_WIDTH = 900;
+    private static final int PANEL_HEIGHT = 600;
+
+    public Program() {
+        setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+        setBackground(Color.CYAN);
+        setFocusable(true);
+
+        // --- Load player ---
+        player = new Player(100, 50, "/resources/sprites/knight.png");
+
+        // --- Load tileset ---
+        tiles = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
+
+        if (tiles != null && tiles.length > 0) {
+            // Horizontal floor (example)
+            addTile(-3, 10, 0, true);
+            addTile(-2, 10, 0, true);
+            addTile(-1, 10, 0, true);
+            addTile(0, 10, 0, true);
+            addTile(1, 10, 0, true);
+            addTile(2, 10, 0, true);
+            addTile(3, 10, 0, true);
+            addTile(4, 10, 0, true);
+            addTile(5, 10, 0, true);
+            
+            addTile(0, 0, 0, true);
+            
+            addTile(1, 5, 0, true);
+            addTile(-1, 3, 0, true);
+            addTile(-2, 2, 0, true);
+            
+            // Vertical wall
+            addTile(3, 7, 0, true);
+            addTile(5, 8, 0, true);
+            addTile(5, 9, 0, true);
+        }
+
+        // --- Input handling ---
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int kc = e.getKeyCode();
+                if (kc == KeyEvent.VK_LEFT) leftPressed = true;
+                if (kc == KeyEvent.VK_RIGHT) rightPressed = true;
+                if (kc == KeyEvent.VK_SPACE) player.jump();
+                updatePlayerMovement();
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int kc = e.getKeyCode();
+                if (kc == KeyEvent.VK_LEFT) leftPressed = false;
+                if (kc == KeyEvent.VK_RIGHT) rightPressed = false;
+                updatePlayerMovement();
+            }
+
+            private void updatePlayerMovement() {
+                if (leftPressed && !rightPressed) player.moveLeft();
+                else if (rightPressed && !leftPressed) player.moveRight();
+                else player.stop();
+            }
+        });
+
+        // --- Game loop ---
+        new Thread(() -> {
+            final double dt = 1.0 / 60.0;
+            while (true) {
+                player.update(dt, map);
+
+                // camera follows player
+                camX = player.getX() - PANEL_WIDTH / 2 + player.getWidth() / 2;
+                camY = player.getY() - PANEL_HEIGHT / 2 + player.getHeight() / 2;
+
+                repaint();
+                try { Thread.sleep(16); } catch (InterruptedException ignored) {}
+            }
+        }).start();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // draw tiles relative to camera
+        for (Tile t : map) {
+            t.draw(g, camX, camY);
+        }
+
+        // draw player relative to camera
+        player.drawAt(g, camX, camY);
+    }
+
+    private void addTile(int x, int y, int tileIndex, boolean solid) {
+        map.add(new Tile(x, y, tiles[tileIndex], solid));
+    }
+
+    public static void main(String[] args) {
+        JFrame window = new JFrame("The Jumper - Camera Example");
+        Program panel = new Program();
+
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setContentPane(panel);
+        window.pack();
+        window.setLocationRelativeTo(null);
+        window.setResizable(false);
+        window.setVisible(true);
+
+        panel.requestFocusInWindow();
+    }
 }
