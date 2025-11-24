@@ -1,6 +1,6 @@
 package com.mygame;
 
-import java.awt.Image;
+//import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -15,7 +15,7 @@ public class Player {
 	private float speed = 5;
 	private boolean isJumping;
 	
-	private final int GRAVITY = 1;
+//	private final int GRAVITY = 1;
 	private final int JUMP_STRENGTH = -15;
 	
 	private BufferedImage spriteSheet;
