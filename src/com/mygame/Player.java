@@ -15,10 +15,10 @@ public class Player {
 	private float speed = 300;
 	private boolean isJumping;
 	
-	private final float GRAVITY = 900f;
-	private final int JUMP_STRENGTH = -450;
-	private final int GROUND_LEVEL = 500;
-	private final float MAX_FALL_SPEED = 500f;
+	private final float GRAVITY = 2500f;
+	private final int JUMP_STRENGTH = -850;
+	private final int GROUND_LEVEL = 300;
+	private final float MAX_FALL_SPEED = 600f;
 	
 	private BufferedImage spriteSheet;
 	private BufferedImage currentFrame;
