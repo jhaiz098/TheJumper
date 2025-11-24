@@ -12,7 +12,7 @@ public class Player {
 	
 	private int x, y;
 	private float veloX, veloY = 0;
-	private float speed = 5;
+	private float speed = 300;
 	private boolean isJumping;
 	
 	private final float GRAVITY = 900f;
@@ -43,8 +43,8 @@ public class Player {
         }	
 	}
 	
-	public void moveLeft() { veloX -= speed; }
-	public void moveRight() { veloY += speed; }
+	public void moveLeft() { veloX = -speed; }
+	public void moveRight() { veloX = speed; }
 	public void stop() { veloX = 0; }
 	public void jump() {
 		if(!isJumping) {
