@@ -15,8 +15,9 @@ public class Player {
 	private float speed = 5;
 	private boolean isJumping;
 	
-//	private final int GRAVITY = 1;
+	private final float GRAVITY = 9.18f * 100;
 	private final int JUMP_STRENGTH = -15;
+	private final int GROUND_LEVEL = 500;
 	
 	private BufferedImage spriteSheet;
 	private BufferedImage currentFrame;
@@ -51,10 +52,22 @@ public class Player {
 		}
 	}
 	
-	public void update() {
-		x += veloX;
-		y += veloY;
-	}
+	public void update(double dt) {
+        // apply gravity
+        veloY += GRAVITY * dt;
+
+        // update pos
+        x += veloX * dt;
+        y += veloY * dt;
+
+        // ground collision
+        if (y >= GROUND_LEVEL) {
+            y = GROUND_LEVEL;
+            veloY = 0;
+            isJumping = false;
+        }
+    }
+
 	
 	public void draw(Graphics g) {
 		g.drawImage(currentFrame, x, y, SPRITE_WIDTH * 3, SPRITE_HEIGHT * 3, null);

@@ -9,12 +9,30 @@ import java.awt.Color;
 public class Program extends JPanel {
 
 	private Player player;
+	private long lastTime;
 	
 	public Program() {
 		setPreferredSize(new Dimension(800,600));
 		setBackground(Color.CYAN);
 		
 		player = new Player(0, 0, "/resources/sprites/knight.png");
+		
+		lastTime = System.nanoTime();
+		
+		new Thread(() -> {
+			
+			while(true) {
+				
+				long now = System.nanoTime();
+				double deltaTime = (now - lastTime) / 1_000_000_000.0;
+				lastTime = now;
+				
+				player.update(deltaTime);
+				repaint();
+				
+				try { Thread.sleep(1); } catch (Exception e) {}
+			}
+		}).start();
 	}
 	
 	@Override
