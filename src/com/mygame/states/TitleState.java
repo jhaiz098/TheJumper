@@ -23,12 +23,17 @@ public class TitleState implements GameState {
         g.drawString("THE JUMPER", 280, 200);
         g.setFont(new Font("SansSerif", Font.PLAIN, 24));
         g.drawString("Press ENTER to continue", 320, 260);
-        g.drawString("Press S for Settings, T for Tutorial", 280, 300);
+        g.drawString("Press 1 for Level 1", 350, 300);
     }
 
     @Override
     public void keyPressed(int key) {
-        
+//        if (key == KeyEvent.VK_ENTER) gsm.setState(GameStateManager.LEVEL_SELECT);
+//        if (key == KeyEvent.VK_S) gsm.setState(GameStateManager.SETTINGS);
+//        if (key == KeyEvent.VK_T) gsm.setState(GameStateManager.TUTORIAL);
+
+        if (key == KeyEvent.VK_ENTER) gsm.setState(GameStateManager.MAIN_MENU);
+        if (key == KeyEvent.VK_1) gsm.setState(GameStateManager.LEVEL_1);
     }
 
     @Override public void keyReleased(int key) {}
