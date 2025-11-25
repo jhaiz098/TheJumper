@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.util.List;
+import java.awt.event.KeyEvent;
 
 public class Player {
 
@@ -23,6 +24,10 @@ public class Player {
     private final int SPRITE_HEIGHT = 32;
     private final int SCALE = 3;
 
+    // track movement keys internally
+    private boolean leftPressed = false;
+    private boolean rightPressed = false;
+
     public Player(int x, int y, String spriteSheetPath) {
         this.x = x;
         this.y = y;
@@ -39,9 +44,26 @@ public class Player {
         }
     }
 
-    public void moveLeft() { veloX = -speed; }
-    public void moveRight() { veloX = speed; }
-    public void stop() { veloX = 0; }
+    // input handling
+    public void keyPressed(int key) {
+        if (key == KeyEvent.VK_LEFT) leftPressed = true;
+        if (key == KeyEvent.VK_RIGHT) rightPressed = true;
+        if (key == KeyEvent.VK_SPACE) jump();
+        updateVelocity();
+    }
+
+    public void keyReleased(int key) {
+        if (key == KeyEvent.VK_LEFT) leftPressed = false;
+        if (key == KeyEvent.VK_RIGHT) rightPressed = false;
+        updateVelocity();
+    }
+
+    private void updateVelocity() {
+        if (leftPressed && !rightPressed) veloX = -speed;
+        else if (rightPressed && !leftPressed) veloX = speed;
+        else veloX = 0;
+    }
+
     public void jump() {
         if (!isJumping) {
             veloY = JUMP_STRENGTH;
@@ -52,11 +74,14 @@ public class Player {
     public void update(double dt, List<Tile> map) {
         // Horizontal movement
         x += veloX * dt;
-        for (Tile t : map) {
-            if (t.isSolid() && getBounds().intersects(t.getBounds())) {
-                if (veloX > 0) x = t.getBounds().x - (11 * SCALE + 10 * SCALE); // hitbox right
-                else if (veloX < 0) x = t.getBounds().x - 11 * SCALE + t.getBounds().width; // hitbox left
-                veloX = 0;
+
+        if (map != null) {
+            for (Tile t : map) {
+                if (t.isSolid() && getBounds().intersects(t.getBounds())) {
+                    if (veloX > 0) x = t.getBounds().x - (11 * SCALE + 10 * SCALE); // hitbox right
+                    else if (veloX < 0) x = t.getBounds().x - 11 * SCALE + t.getBounds().width; // hitbox left
+                    veloX = 0;
+                }
             }
         }
 
@@ -64,19 +89,23 @@ public class Player {
         veloY += GRAVITY * dt;
         if (veloY > MAX_FALL_SPEED) veloY = MAX_FALL_SPEED;
         y += veloY * dt;
-        for (Tile t : map) {
-            if (t.isSolid() && getBounds().intersects(t.getBounds())) {
-                if (veloY > 0) { // falling
-                    y = t.getBounds().y - (13 * SCALE + 15 * SCALE); // hitbox bottom
-                    veloY = 0;
-                    isJumping = false;
-                } else if (veloY < 0) { // jumping
-                    y = t.getBounds().y - 13 * SCALE + t.getBounds().height; // hitbox top
-                    veloY = 0;
+
+        if (map != null) {
+            for (Tile t : map) {
+                if (t.isSolid() && getBounds().intersects(t.getBounds())) {
+                    if (veloY > 0) { // falling
+                        y = t.getBounds().y - (13 * SCALE + 15 * SCALE); // hitbox bottom
+                        veloY = 0;
+                        isJumping = false;
+                    } else if (veloY < 0) { // jumping
+                        y = t.getBounds().y - 13 * SCALE + t.getBounds().height; // hitbox top
+                        veloY = 0;
+                    }
                 }
             }
         }
     }
+
 
     public void drawAt(Graphics g, int camX, int camY) {
         g.drawImage(currentFrame, x - camX, y - camY, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
@@ -93,7 +122,7 @@ public class Player {
         int hitboxHeight = 15 * SCALE;
         return new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
     }
-
+    
     // Getters for camera
     public int getX() { return x; }
     public int getY() { return y; }

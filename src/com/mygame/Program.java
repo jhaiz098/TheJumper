@@ -78,9 +78,9 @@ public class Program extends JPanel {
             }
 
             private void updatePlayerMovement() {
-                if (leftPressed && !rightPressed) player.moveLeft();
-                else if (rightPressed && !leftPressed) player.moveRight();
-                else player.stop();
+//                if (leftPressed && !rightPressed) player.moveLeft();
+//                else if (rightPressed && !leftPressed) player.moveRight();
+//                else player.stop();
             }
         });
 
