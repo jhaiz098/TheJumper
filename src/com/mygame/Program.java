@@ -114,7 +114,7 @@ public class Program extends JPanel {
     }
 
     private void addTile(int x, int y, int tileIndex, boolean solid) {
-        map.add(new Tile(x, y, tiles[tileIndex], solid));
+//        map.add(new Tile(x, y, tiles[tileIndex], solid));
     }
 
     public static void main(String[] args) {

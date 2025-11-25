@@ -16,25 +16,37 @@ public class TitleState implements GameState {
 
     @Override
     public void render(Graphics g) {
+    	
+    	Font customFont = null;
+    	try {
+    	    customFont = Font.createFont(
+    	            Font.TRUETYPE_FONT,
+    	            getClass().getResourceAsStream("/resources/fonts/PixelOperator8-Bold.ttf")
+    	    );
+
+    	    customFont = customFont.deriveFont(Font.BOLD, 48f); // size 48
+
+    	    g.setFont(customFont);
+
+    	} catch (Exception e) {
+    	    e.printStackTrace();
+    	    // fallback
+    	    g.setFont(new Font("SansSerif", Font.BOLD, 48));
+    	}
+
+    	
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0,0,900,600);
         g.setColor(Color.WHITE);
-        g.setFont(new Font("SansSerif", Font.BOLD, 48));
-        g.drawString("THE JUMPER", 280, 200);
+        g.setFont(customFont);
+        g.drawString("THE JUMPER", 230, 200);
         g.setFont(new Font("SansSerif", Font.PLAIN, 24));
-        g.drawString("Press ENTER to continue", 320, 260);
-        g.drawString("Press 1-10 for Levels 1-10", 350, 300);
+        g.drawString("Press ENTER to continue", 320, 350);
     }
 
     @Override
     public void keyPressed(int key) {
-//        if (key == KeyEvent.VK_ENTER) gsm.setState(GameStateManager.LEVEL_SELECT);
-//        if (key == KeyEvent.VK_S) gsm.setState(GameStateManager.SETTINGS);
-//        if (key == KeyEvent.VK_T) gsm.setState(GameStateManager.TUTORIAL);
-
         if (key == KeyEvent.VK_ENTER) gsm.setState(GameStateManager.MAIN_MENU);
-        if (key == KeyEvent.VK_1) gsm.setState(GameStateManager.LEVEL_1);
-        if (key == KeyEvent.VK_2) gsm.setState(GameStateManager.LEVEL_2);
     }
 
     @Override public void keyReleased(int key) {}

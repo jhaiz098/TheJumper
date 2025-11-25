@@ -21,12 +21,18 @@ public class Level1State extends BaseLevelState {
         if (tileset != null && tileset.length > 0) {
             // Ground at y=10
             for (int i = -3; i <= 8; i++) {
-                addTile(i, 10, 0, true); // inherited method
+                addTile(i, 10, 0, 1, true); // inherited method
+            }
+            
+            for(int x = 0; x < 10; x++) {
+            	for(int y = 0; y < 13; y++) {
+            		addTile(x, y, 160, -10, false);
+            	}
             }
 
             // Vertical wall at x=5
-            addTile(5, 9, 0, true);
-            addTile(5, 8, 0, true);
+            addTile(5, 9, 0, 1, true);
+            addTile(5, 8, 1, 1, true);
         }
 
         // Create player

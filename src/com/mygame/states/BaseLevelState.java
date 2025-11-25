@@ -14,16 +14,20 @@ public abstract class BaseLevelState implements GameState {
         map = new ArrayList<>();
     }
 
-    protected void addTile(int tx, int ty, int tileIndex, boolean solid) {
+    protected void addTile(int tx, int ty, int tileIndex, int zIndex, boolean solid) {
         BufferedImage[] tileset = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
         if (tileset != null && tileset.length > tileIndex) {
-            map.add(new Tile(tx, ty, tileset[tileIndex], solid));
+            map.add(new Tile(tx, ty, tileset[tileIndex], zIndex, solid));
         }
     }
 
+
     protected void renderTiles(Graphics g, int camX, int camY) {
+        // sort tiles by z-index (lowest drawn first)
+        map.sort((a, b) -> Integer.compare(a.getZ(), b.getZ()));
+
         for (Tile t : map) {
-            t.draw(g, camX, camY); // <- use drawAt to respect camera
+            t.draw(g, camX, camY);
         }
     }
 

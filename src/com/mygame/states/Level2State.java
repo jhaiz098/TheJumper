@@ -23,15 +23,15 @@ public class Level2State extends BaseLevelState{
         if (tileset != null && tileset.length > 0) {
             // Ground at y=10
             for (int i = -3; i <= 8; i++) {
-                addTile(i, 10, 0, true); // inherited method
+                addTile(i, 10, 0, 1, true); // inherited method
             }
 
             // Vertical wall at x=5
-            addTile(5, 9, 0, true);
-            addTile(5, 8, 0, true);
-            addTile(7, 8, 0, true);
-            addTile(7, 8, 0, true);
-            addTile(7, 8, 0, true);
+            addTile(5, 9, 0, 1, true);
+            addTile(5, 8, 0, 1, true);
+            addTile(7, 8, 0, 1,true);
+            addTile(7, 8, 0, 1,true);
+            addTile(7, 8, 0, 1,true);
         }
 
         // Create player

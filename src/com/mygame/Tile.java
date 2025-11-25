@@ -13,11 +13,23 @@ public class Tile {
     BufferedImage sprite;
     private boolean solid;
 
-    public Tile(int tx, int ty, BufferedImage sprite, boolean solid) {
+    private int zIndex;  // tile layer
+
+    // Updated constructor with zIndex
+    public Tile(int tx, int ty, BufferedImage sprite, int zIndex, boolean solid) {
         this.tx = tx;
         this.ty = ty;
         this.sprite = sprite;
+        this.zIndex = zIndex;
         this.solid = solid;
+    }
+
+    public int getZ() {
+        return zIndex;
+    }
+
+    public void setZ(int z) {
+        this.zIndex = z;
     }
 
     public boolean isSolid() { return solid; }
@@ -38,5 +50,4 @@ public class Tile {
         Rectangle hb = getBounds();
         g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
     }
-
 }
