@@ -23,6 +23,7 @@ public class GameStateManager {
             case TITLE -> current = new TitleState(this);
             case MAIN_MENU -> current = new MainMenuState(this);
             case LEVEL_1 -> current = new Level1State(this);
+            case LEVEL_2 -> current = new Level2State(this);
             // ...
         }
     }

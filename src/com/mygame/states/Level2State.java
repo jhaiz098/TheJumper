@@ -1,22 +1,24 @@
 package com.mygame.states;
 
-import com.mygame.*;
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public class Level1State extends BaseLevelState {
+import com.mygame.GameStateManager;
+import com.mygame.Player;
+import com.mygame.TileLoader;
 
-    private final GameStateManager gsm;
+public class Level2State extends BaseLevelState{
+
+	private final GameStateManager gsm;
     private Player player;
     private BufferedImage[] tileset;
-
-    public Level1State(GameStateManager gsm) {
-        this.gsm = gsm;
-        
-        // Load tileset (example: 16x16 tiles)
-        tileset = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
-
-        // Initialize tile map (use inherited map)
+    
+    public Level2State(GameStateManager gsm) {
+    	this.gsm = gsm;
+    	
+    	tileset = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
+    	
+    	// Initialize tile map (use inherited map)
         map = new java.util.ArrayList<>();
         if (tileset != null && tileset.length > 0) {
             // Ground at y=10
@@ -27,12 +29,15 @@ public class Level1State extends BaseLevelState {
             // Vertical wall at x=5
             addTile(5, 9, 0, true);
             addTile(5, 8, 0, true);
+            addTile(7, 8, 0, true);
+            addTile(7, 8, 0, true);
+            addTile(7, 8, 0, true);
         }
 
         // Create player
-        player = new Player(100, 100, "/resources/sprites/knight.png");
+        player = new Player(50, 100, "/resources/sprites/knight.png");
     }
-
+    
     @Override
     public void update(double dt) {
         player.update(dt, map);

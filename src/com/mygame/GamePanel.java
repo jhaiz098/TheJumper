@@ -6,8 +6,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class GamePanel extends JPanel implements Runnable {
-    private static final int WIDTH = 900, HEIGHT = 600;
-    private final GameStateManager gsm;
+    public static final int WIDTH = 900, HEIGHT = 600;
+    public final GameStateManager gsm;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));

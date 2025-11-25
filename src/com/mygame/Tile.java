@@ -30,11 +30,13 @@ public class Tile {
     }
 
     public void draw(Graphics g, int camX, int camY) {
+        if (sprite == null) return; // safety check
         g.drawImage(sprite, getScreenX() - camX, getScreenY() - camY, PIXEL, PIXEL, null);
 
-        // optional: draw hitbox
+        // Optional: draw hitbox
         g.setColor(Color.RED);
         Rectangle hb = getBounds();
         g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
     }
+
 }
