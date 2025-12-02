@@ -18,20 +18,44 @@ public class TitleState implements GameState {
     private Button playButton;
     private Button quitButton;
     
+    private BufferedImage bgImage = null;
+    
     public TitleState(GameStateManager gsm) {
     	this.gsm = gsm;
     	
-    	BufferedImage buttonSprite = null;
+    	BufferedImage playButtonSprite = null,
+    			quitButtonSprite = null,
+    			playHoveredButtonSprite = null,
+    			quitHoveredButtonSprite = null;
         try {
-            buttonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/button.png"));
+        	playButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/playButton.png"));
+            quitButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/quitButton.png"));
+
+            playHoveredButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/playButtonHovered.png"));
+            quitHoveredButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/quitButtonHovered.png"));
+            
+            bgImage = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/title_bg.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
         
-        playButton = new Button(350, 300, buttonSprite, 4);
-        quitButton = new Button(350, 380, buttonSprite, 4);
+        playButton = new Button(350, 300, playButtonSprite, playHoveredButtonSprite, 4);
+        quitButton = new Button(350, 380, quitButtonSprite, quitHoveredButtonSprite, 4);
         
     }
+    
+    @Override
+    public void mouseMoved(int mx, int my) {
+        playButton.updateHover(mx, my);
+        quitButton.updateHover(mx, my);
+    }
+
+    @Override
+    public void mousePressed(int mx, int my) {
+        if (playButton.isClicked(mx, my)) gsm.setState(GameStateManager.MAIN_MENU);
+        if (quitButton.isClicked(mx, my)) System.exit(0);
+    }
+
     
     @Override public void update(double dt) {}
 
@@ -45,7 +69,7 @@ public class TitleState implements GameState {
     	            getClass().getResourceAsStream("/resources/fonts/PixelOperator8-Bold.ttf")
     	    );
 
-    	    customFont = customFont.deriveFont(Font.BOLD, 48f); // size 48
+    	    customFont = customFont.deriveFont(Font.BOLD, 64f); // size 48
 
     	    g.setFont(customFont);
 
@@ -55,48 +79,22 @@ public class TitleState implements GameState {
     	    g.setFont(new Font("SansSerif", Font.BOLD, 48));
     	}
     	
-    	Font customFont2 = null;
-    	try {
-    	    customFont2 = Font.createFont(
-    	            Font.TRUETYPE_FONT,
-    	            getClass().getResourceAsStream("/resources/fonts/PixelOperator8-Bold.ttf")
-    	    );
-
-    	    customFont2 = customFont2.deriveFont(Font.BOLD, 20f); // size 48
-
-    	    g.setFont(customFont2);
-
-    	} catch (Exception e) {
-    	    e.printStackTrace();
-    	    // fallback
-    	    g.setFont(new Font("SansSerif", Font.BOLD, 20));
+    	if (bgImage != null) {
+    	    g.drawImage(bgImage, 0, 0, 900, 600, null);
+    	} else {
+    	    g.setColor(Color.DARK_GRAY);
+    	    g.fillRect(0,0,900,600);
     	}
 
-    	
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(0,0,900,600);
         g.setColor(Color.WHITE);
         g.setFont(customFont);
-        g.drawString("THE JUMPER", 230, 200);
-        g.setFont(new Font("SansSerif", Font.PLAIN, 24));
-        g.drawString("Press ENTER to continue", 320, 350);
+        g.drawString("THE JUMPER", 150, 200);
         
         playButton.draw(g);
         quitButton.draw(g);
-        
-        g.setFont(customFont2);
-        g.setColor(Color.WHITE);
-        
-        g.drawString("Play", 410,336);
-        g.drawString("Quit", 410,336 + 80);
     }
 
-    
-    
-    @Override
-    public void keyPressed(int key) {
-        if (key == KeyEvent.VK_ENTER) gsm.setState(GameStateManager.MAIN_MENU);
-    }
+    @Override public void keyPressed(int key) {}
 
     @Override public void keyReleased(int key) {}
 }

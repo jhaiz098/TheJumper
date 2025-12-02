@@ -2,10 +2,9 @@ package com.mygame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 
-public class GamePanel extends JPanel implements Runnable {
+public class GamePanel extends JPanel implements Runnable, MouseMotionListener, MouseListener {
     public static final int WIDTH = 900, HEIGHT = 600;
     public final GameStateManager gsm;
 
@@ -15,6 +14,7 @@ public class GamePanel extends JPanel implements Runnable {
         gsm = new GameStateManager();
         gsm.setState(GameStateManager.TITLE);
 
+        // Key listener
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -28,6 +28,10 @@ public class GamePanel extends JPanel implements Runnable {
                 if (state != null) state.keyReleased(e.getKeyCode());
             }
         });
+
+        // Mouse listeners
+        addMouseMotionListener(this);
+        addMouseListener(this);
 
         new Thread(this).start();
     }
@@ -49,4 +53,29 @@ public class GamePanel extends JPanel implements Runnable {
         GameState state = gsm.getState();
         if (state != null) state.render(g);
     }
+
+    // MouseMotionListener
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        GameState state = gsm.getState();
+        if (state != null) state.mouseMoved(e.getX(), e.getY());
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        GameState state = gsm.getState();
+        if (state != null) state.mouseMoved(e.getX(), e.getY());
+    }
+
+    // MouseListener
+    @Override
+    public void mousePressed(MouseEvent e) {
+        GameState state = gsm.getState();
+        if (state != null) state.mousePressed(e.getX(), e.getY());
+    }
+
+    @Override public void mouseReleased(MouseEvent e) {}
+    @Override public void mouseClicked(MouseEvent e) {}
+    @Override public void mouseEntered(MouseEvent e) {}
+    @Override public void mouseExited(MouseEvent e) {}
 }

@@ -7,4 +7,8 @@ public interface GameState {
     void render(Graphics g);
     void keyPressed(int key);
     void keyReleased(int key);
+    
+    default void mouseMoved(int x, int y) {}
+    default void mousePressed(int x, int y) {}
+
 }

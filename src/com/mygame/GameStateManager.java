@@ -29,4 +29,14 @@ public class GameStateManager {
     }
 
     public GameState getState() { return current; }
+    
+    public void mouseMoved(int x, int y) {
+        if (current != null) current.mouseMoved(x, y);
+    }
+
+    public void mousePressed(int x, int y) {
+        if (current != null) current.mousePressed(x, y);
+    }
+
 }
+
