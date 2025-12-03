@@ -79,12 +79,7 @@ public class TitleState implements GameState {
     	    g.setFont(new Font("SansSerif", Font.BOLD, 48));
     	}
     	
-    	if (bgImage != null) {
-    	    g.drawImage(bgImage, 0, 0, 900, 600, null);
-    	} else {
-    	    g.setColor(Color.DARK_GRAY);
-    	    g.fillRect(0,0,900,600);
-    	}
+    	g.drawImage(bgImage, 0, 0, 900, 600, null);
 
         g.setColor(Color.WHITE);
         g.setFont(customFont);
