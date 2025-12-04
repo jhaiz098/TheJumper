@@ -8,13 +8,13 @@ import com.mygame.GameStateManager;
 import com.mygame.Player;
 import com.mygame.TileLoader;
 
-public class Level2State extends BaseLevelState{
-
+public class Level3State extends BaseLevelState{
+	
 	private final GameStateManager gsm;
     private Player player;
     private BufferedImage[] tileset;
     
-    public Level2State(GameStateManager gsm) {
+    public Level3State(GameStateManager gsm) {
     	this.gsm = gsm;
     	
     	tileset = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
@@ -48,7 +48,7 @@ public class Level2State extends BaseLevelState{
             }
             
         }
-
+        
         // Create player
         player = new Player(50, 100, "/resources/sprites/knight.png");
     }
@@ -79,4 +79,5 @@ public class Level2State extends BaseLevelState{
     public void keyReleased(int key) {
         player.keyReleased(key);
     }
+	
 }

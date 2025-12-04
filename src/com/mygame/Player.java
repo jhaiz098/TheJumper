@@ -15,7 +15,7 @@ public class Player {
     private boolean isJumping;
 
     private final float GRAVITY = 2500f;
-    private final int JUMP_STRENGTH = -850;
+    private final int JUMP_STRENGTH = -900;
     private final float MAX_FALL_SPEED = 600f;
 
     private BufferedImage spriteSheet;

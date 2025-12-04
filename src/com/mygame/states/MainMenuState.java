@@ -71,6 +71,14 @@ public class MainMenuState implements GameState {
     public void keyPressed(int key) {
     	if (key == KeyEvent.VK_1) gsm.setState(GameStateManager.LEVEL_1);
         if (key == KeyEvent.VK_2) gsm.setState(GameStateManager.LEVEL_2);
+        if (key == KeyEvent.VK_3) gsm.setState(GameStateManager.LEVEL_3);
+        if (key == KeyEvent.VK_4) gsm.setState(GameStateManager.LEVEL_4);
+        if (key == KeyEvent.VK_5) gsm.setState(GameStateManager.LEVEL_5);
+        if (key == KeyEvent.VK_6) gsm.setState(GameStateManager.LEVEL_6);
+        if (key == KeyEvent.VK_7) gsm.setState(GameStateManager.LEVEL_7);
+        if (key == KeyEvent.VK_8) gsm.setState(GameStateManager.LEVEL_8);
+        if (key == KeyEvent.VK_9) gsm.setState(GameStateManager.LEVEL_9);
+        if (key == KeyEvent.VK_0) gsm.setState(GameStateManager.LEVEL_10);
     }
 
     @Override

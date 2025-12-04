@@ -19,20 +19,67 @@ public class Level1State extends BaseLevelState {
         // Initialize tile map (use inherited map)
         map = new java.util.ArrayList<>();
         if (tileset != null && tileset.length > 0) {
-            // Ground at y=10
-            for (int i = -3; i <= 8; i++) {
+            
+        	// Ground at y=10
+            for (int i = -2; i <= 8; i++) {
                 addTile(i, 10, 0, 1, true); // inherited method
             }
             
-            for(int x = 0; x < 10; x++) {
-            	for(int y = 0; y < 13; y++) {
-            		addTile(x, y, 160, -10, false);
+//            //BG
+//            for(int x = -4; x < 20; x++) {
+//            	for(int y = 3; y < 13; y++) {
+//            		addTile(x, y, 176, -10, false);
+//            	}
+//            }
+            
+            for(int x=-2; x<9; x++) {
+            	for(int y=11; y<13; y++) {
+            		addTile(x,y,16,1,true);
+            	}
+            }
+            
+            for(int x=9; x<15; x++) {
+            	for(int y=12; y<13;y++) {
+            		addTile(x,y,0,1,true);
+            	}
+            }
+            
+//            for(int x=-3; x>-5; x--) {
+//            	for(int y=12; y>0;y--) {
+//            		addTile(x,y,16,1,true);
+//            	}
+//            }
+            
+            for(int x=8; x<15; x++) {
+            	for (int y=13; y<14;y++) {
+            		addTile(x,y,16,1,true);
+            	}
+            }
+            
+            for(int x=18; x<23; x++) {
+            	for(int y=12;y<13;y++) {
+            		addTile(x,y,0,1,true);
+            	}
+            }
+            
+            for(int x=23;x<32;x++) {
+            	for(int y=11;y<12;y++) {
+            		addTile(x,y,0,1,true);
+            	}
+            }
+            
+            for(int x=18; x<24; x++) {
+            	for(int y=13; y<14; y++) {
+            		addTile(x,y,16,1,true);
+            	}
+            }
+            
+            for(int x=23; x<32; x++) {
+            	for(int y=12; y<13; y++) {
+            		addTile(x,y,16,1,true);
             	}
             }
 
-            // Vertical wall at x=5
-            addTile(5, 9, 0, 1, true);
-            addTile(5, 8, 1, 1, true);
         }
 
         // Create player
@@ -48,7 +95,10 @@ public class Level1State extends BaseLevelState {
     public void render(Graphics g) {
         int camX = player.getX() - 450;
         int camY = player.getY() - 300;
-
+        
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, 900, 600);
+        
         renderTiles(g, camX, camY);   // inherited from BaseLevelState
         player.drawAt(g, camX, camY);
     }

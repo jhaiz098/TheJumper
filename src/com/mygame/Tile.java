@@ -10,7 +10,7 @@ public class Tile {
     public static final int PIXEL = TILE_SIZE * SCALE;
 
     public int tx, ty; // tile coordinates in the world
-    BufferedImage sprite;
+    public BufferedImage sprite;
     private boolean solid;
 
     private int zIndex;  // tile layer
@@ -45,9 +45,12 @@ public class Tile {
         if (sprite == null) return; // safety check
         g.drawImage(sprite, getScreenX() - camX, getScreenY() - camY, PIXEL, PIXEL, null);
 
-        // Optional: draw hitbox
-        g.setColor(Color.RED);
-        Rectangle hb = getBounds();
-        g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
+        if(solid) {
+        	// Optional: draw hitbox
+            g.setColor(Color.RED);
+            Rectangle hb = getBounds();
+//            g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
+        }
+        
     }
 }
