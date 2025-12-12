@@ -8,7 +8,6 @@ import java.util.List;
 import java.awt.event.KeyEvent;
 
 public class Player {
-
     private int x, y;
     private float veloX, veloY;
     private float speed = 300;
@@ -19,7 +18,15 @@ public class Player {
     private final float MAX_FALL_SPEED = 600f;
 
     private BufferedImage spriteSheet;
+    private BufferedImage[] walkFrames;
+    private BufferedImage[] idleFrames;
     private BufferedImage currentFrame;
+    
+    private int walkFrameIndex = 0; // separate index for walk animation
+    private int idleFrameIndex = 0; // separate index for idle animation
+    private long lastFrameTime = 0;
+    private final int FRAME_DELAY = 100;  // Milliseconds to wait before changing frame
+
     private final int SPRITE_WIDTH = 32;
     private final int SPRITE_HEIGHT = 32;
     private final int SCALE = 3;
@@ -27,6 +34,9 @@ public class Player {
     // track movement keys internally
     private boolean leftPressed = false;
     private boolean rightPressed = false;
+    
+    // Track if the player is facing left or right
+    private boolean facingLeft = false;
 
     public Player(int x, int y, String spriteSheetPath) {
         this.x = x;
@@ -37,7 +47,26 @@ public class Player {
 
         try {
             spriteSheet = ImageIO.read(getClass().getResource(spriteSheetPath));
-            currentFrame = spriteSheet.getSubimage(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
+
+            // Load walking frames
+            walkFrames = new BufferedImage[16];  
+            int frameIndex = 0;  // This will help in filling the walkFrames array correctly.
+
+            for (int o = 2; o < 4; o++) {  // Rows 2 and 3 (y = 2, 3)
+                for (int i = 0; i < 8; i++) {  // Columns 0-7 (x = 0 to 7)
+                    walkFrames[frameIndex] = spriteSheet.getSubimage(i * SPRITE_WIDTH, o * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
+                    frameIndex++;  // Increment to the next frame index
+                }
+            }
+
+
+            // Load idle frames
+            idleFrames = new BufferedImage[4]; 
+            for (int i = 0; i < 4; i++) {
+                idleFrames[i] = spriteSheet.getSubimage(i * SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
+            }
+            
+            currentFrame = idleFrames[0];  // Set the initial frame to idle
         } catch (IOException e) {
             e.printStackTrace();
             currentFrame = new BufferedImage(SPRITE_WIDTH, SPRITE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
@@ -71,7 +100,7 @@ public class Player {
         }
     }
 
-    public void update(double dt, List<Tile> map) {
+    public void update(double dt, List<Coin> coins, List<Tile> map) {
         // Horizontal movement
         x += veloX * dt;
 
@@ -84,6 +113,10 @@ public class Player {
                 }
             }
         }
+
+        // Update facing direction
+        if (veloX > 0) facingLeft = false; // facing right
+        else if (veloX < 0) facingLeft = true; // facing left
 
         // Vertical movement
         veloY += GRAVITY * dt;
@@ -104,15 +137,51 @@ public class Player {
                 }
             }
         }
+
+        // Check for collisions with coins
+        for (Coin coin : coins) {
+            if (getBounds().intersects(coin.getBounds())) {
+                // If collision detected, remove the coin from the list
+                coins.remove(coin);
+                break;  // Remove only one coin per frame
+            }
+        }
+        
+        // Animation logic: change frame based on movement
+        if (System.currentTimeMillis() - lastFrameTime > FRAME_DELAY) {
+            lastFrameTime = System.currentTimeMillis();
+
+            if (isJumping) {
+                // If jumping, show the jumping frame (frame 0 from row 2)
+                currentFrame = spriteSheet.getSubimage(0, 2 * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
+            } else {
+                // If not jumping, handle walking or idle frames
+                if (veloX != 0) {
+                    // Walking animation: Loop through walk frames
+                    currentFrame = walkFrames[walkFrameIndex];
+                    walkFrameIndex = (walkFrameIndex + 1) % walkFrames.length;  // Loop through walk frames (index 0-7)
+                } else {
+                    // Idle animation: Loop through idle frames
+                    currentFrame = idleFrames[idleFrameIndex];
+                    idleFrameIndex = (idleFrameIndex + 1) % idleFrames.length;  // Loop through idle frames (index 0-3)
+                }
+            }
+        }
     }
 
 
     public void drawAt(Graphics g, int camX, int camY) {
-        g.drawImage(currentFrame, x - camX, y - camY, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
+        // Flip the sprite if the player is facing left
+        Graphics2D g2d = (Graphics2D) g;
+        if (facingLeft) {
+            g2d.drawImage(currentFrame, x - camX + SPRITE_WIDTH * SCALE, y - camY, -SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
+        } else {
+            g2d.drawImage(currentFrame, x - camX, y - camY, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
+        }
 
         g.setColor(Color.RED);
         Rectangle hb = getBounds();
-        g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
+//        g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
     }
 
     public Rectangle getBounds() {
@@ -122,7 +191,7 @@ public class Player {
         int hitboxHeight = 15 * SCALE;
         return new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
     }
-    
+
     // Getters for camera
     public int getX() { return x; }
     public int getY() { return y; }

@@ -3,7 +3,10 @@ package com.mygame.states;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.mygame.Coin;
 import com.mygame.GameStateManager;
 import com.mygame.Player;
 import com.mygame.TileLoader;
@@ -18,6 +21,14 @@ public class Level2State extends BaseLevelState{
     	this.gsm = gsm;
     	
     	tileset = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
+    	
+    	List<int[]> coinPositions = new ArrayList<>();
+        coinPositions.add(new int[]{100, 300});
+        coinPositions.add(new int[]{200, 350});
+        coinPositions.add(new int[]{300, 400});
+
+        // Add coins to the level
+        addCoins(coinPositions, "/resources/sprites/coin.png");
     	
     	// Initialize tile map (use inherited map)
         map = new java.util.ArrayList<>();
@@ -55,8 +66,14 @@ public class Level2State extends BaseLevelState{
     
     @Override
     public void update(double dt) {
-        player.update(dt, map);
+        player.update(dt, coins, map);  // Pass the coins list to the player
+
+        // Render coins (they will be updated automatically)
+        for (Coin coin : coins) {
+            coin.update();
+        }
     }
+
 
     @Override
     public void render(Graphics g) {
@@ -67,6 +84,11 @@ public class Level2State extends BaseLevelState{
         g.fillRect(0, 0, 900, 600);
         
         renderTiles(g, camX, camY);   // inherited from BaseLevelState
+        
+        for (Coin coin : coins) {
+            coin.drawAt(g, camX, camY);
+        }
+        
         player.drawAt(g, camX, camY);
     }
 
