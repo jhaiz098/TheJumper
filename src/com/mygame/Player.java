@@ -12,6 +12,7 @@ public class Player {
     private float veloX, veloY;
     private float speed = 300;
     private boolean isJumping;
+    private boolean canJump;
 
     private final float GRAVITY = 2500f;
     private final int JUMP_STRENGTH = -900;

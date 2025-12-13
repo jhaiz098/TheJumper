@@ -1,6 +1,7 @@
 package com.mygame.states;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -88,6 +89,12 @@ public class Level2State extends BaseLevelState{
         for (Coin coin : coins) {
             coin.drawAt(g, camX, camY);
         }
+        
+        // Draw the number of coins
+        g.setColor(Color.WHITE); // Set text color to white (you can change this)
+        g.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and style
+        String coinCountText = "Coins: " + coins.size(); // Get the coin count
+        g.drawString(coinCountText, 10, 30); // Draw the coin count at the top-left corner
         
         player.drawAt(g, camX, camY);
     }

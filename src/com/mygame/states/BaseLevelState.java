@@ -111,8 +111,19 @@ public abstract class BaseLevelState implements GameState {
 
     @Override
     public void render(Graphics g) {
+        // Draw the tiles
+        renderTiles(g, 0, 0); // You already have this method for tiles rendering
+
+        // Draw the coins (they will be updated automatically)
         for (Coin coin : coins) {
             coin.drawAt(g, 0, 0);  // Draw each coin
         }
+
+        // Draw the number of coins
+        g.setColor(Color.WHITE); // Set text color to white (you can change this)
+        g.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and style
+        String coinCountText = "Coins: " + coins.size(); // Get the coin count
+        g.drawString(coinCountText, 10, 30); // Draw the coin count at the top-left corner
     }
+
 }

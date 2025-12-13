@@ -55,7 +55,7 @@ public class Level3State extends BaseLevelState{
     
     @Override
     public void update(double dt) {
-        player.update(dt, map);
+//        player.update(dt, map);
     }
 
     @Override
