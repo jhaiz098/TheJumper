@@ -58,6 +58,10 @@ public class Coin {
     public void drawAt(Graphics g, int camX, int camY) {
         // Draw coin at its world coordinates with the camera offset applied
         g.drawImage(currentFrame, x - camX, y - camY, SPRITE_WIDTH * 3, SPRITE_HEIGHT * 3, null);  // Adjust scale as needed
+        
+        g.setColor(Color.RED);
+        Rectangle hb = getBounds();
+        g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
     }
     
     public Rectangle getBounds() {

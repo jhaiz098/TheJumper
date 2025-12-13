@@ -12,7 +12,9 @@ public class Player {
     private float veloX, veloY;
     private float speed = 300;
     private boolean isJumping;
-    private boolean canJump;
+    private boolean isGrounded;  // New flag to track if the player is on the ground
+    private float coyoteTime = 0.3f;  // Time window for coyote time (in seconds)
+    private float coyoteTimeTimer = 0; // Timer to track time since last grounded
 
     private final float GRAVITY = 2500f;
     private final int JUMP_STRENGTH = -900;
@@ -45,6 +47,8 @@ public class Player {
         this.veloX = 0;
         this.veloY = 0;
         this.isJumping = false;
+        this.isGrounded = false;  // Initially not grounded
+        this.coyoteTimeTimer = 0;
 
         try {
             spriteSheet = ImageIO.read(getClass().getResource(spriteSheetPath));
@@ -59,7 +63,6 @@ public class Player {
                     frameIndex++;  // Increment to the next frame index
                 }
             }
-
 
             // Load idle frames
             idleFrames = new BufferedImage[4]; 
@@ -78,7 +81,7 @@ public class Player {
     public void keyPressed(int key) {
         if (key == KeyEvent.VK_LEFT) leftPressed = true;
         if (key == KeyEvent.VK_RIGHT) rightPressed = true;
-        if (key == KeyEvent.VK_SPACE) jump();
+        if (key == KeyEvent.VK_SPACE && (isGrounded || coyoteTimeTimer > 0)) jump();  // Jump if grounded or within coyote time
         updateVelocity();
     }
 
@@ -95,9 +98,11 @@ public class Player {
     }
 
     public void jump() {
-        if (!isJumping) {
+        if (isGrounded || coyoteTimeTimer > 0) {  // Only jump if grounded or within coyote time
             veloY = JUMP_STRENGTH;
             isJumping = true;
+            isGrounded = false;  // Player is no longer on the ground
+            coyoteTimeTimer = 0;  // Reset coyote time when the player jumps
         }
     }
 
@@ -124,13 +129,18 @@ public class Player {
         if (veloY > MAX_FALL_SPEED) veloY = MAX_FALL_SPEED;
         y += veloY * dt;
 
+        // Check for collisions with tiles (solid)
+        isGrounded = false;  // Reset grounded status
+
         if (map != null) {
             for (Tile t : map) {
                 if (t.isSolid() && getBounds().intersects(t.getBounds())) {
                     if (veloY > 0) { // falling
                         y = t.getBounds().y - (13 * SCALE + 15 * SCALE); // hitbox bottom
                         veloY = 0;
+                        isGrounded = true;  // Player is now grounded
                         isJumping = false;
+                        coyoteTimeTimer = 0;  // Reset coyote time when landing
                     } else if (veloY < 0) { // jumping
                         y = t.getBounds().y - 13 * SCALE + t.getBounds().height; // hitbox top
                         veloY = 0;
@@ -147,6 +157,18 @@ public class Player {
                 break;  // Remove only one coin per frame
             }
         }
+
+        // Update coyote time timer (only reduce it if the player is not grounded)
+        if (!isGrounded) {
+            coyoteTimeTimer -= dt;  // Reduce the timer by the elapsed time
+            if (coyoteTimeTimer < 0) {
+                coyoteTimeTimer = 0;  // Ensure it doesn't go negative
+            }
+        } else {
+            // Reset the coyote time timer when the player lands on the ground
+            coyoteTimeTimer = coyoteTime;
+        }
+
         
         // Animation logic: change frame based on movement
         if (System.currentTimeMillis() - lastFrameTime > FRAME_DELAY) {
@@ -170,7 +192,6 @@ public class Player {
         }
     }
 
-
     public void drawAt(Graphics g, int camX, int camY) {
         // Flip the sprite if the player is facing left
         Graphics2D g2d = (Graphics2D) g;
@@ -180,9 +201,10 @@ public class Player {
             g2d.drawImage(currentFrame, x - camX, y - camY, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
         }
 
+        // Optional: Draw hitbox for debugging
         g.setColor(Color.RED);
         Rectangle hb = getBounds();
-//        g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
+        g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
     }
 
     public Rectangle getBounds() {
@@ -198,4 +220,14 @@ public class Player {
     public int getY() { return y; }
     public int getWidth() { return SPRITE_WIDTH * SCALE; }
     public int getHeight() { return SPRITE_HEIGHT * SCALE; }
+
+    // Getter for isGrounded
+    public boolean isGrounded() {
+        return isGrounded;
+    }
+
+    // Getter for coyote time
+    public float getCoyoteTimeTimer() {
+        return coyoteTimeTimer;
+    }
 }
