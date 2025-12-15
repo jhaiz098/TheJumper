@@ -34,6 +34,8 @@ public class Player {
     private final int SPRITE_HEIGHT = 32;
     private final int SCALE = 3;
 
+    private boolean controlsEnabled = true;
+    
     // track movement keys internally
     private boolean leftPressed = false;
     private boolean rightPressed = false;
@@ -79,6 +81,8 @@ public class Player {
 
     // input handling
     public void keyPressed(int key) {
+    	if (!controlsEnabled) return;
+    	
         if (key == KeyEvent.VK_LEFT) leftPressed = true;
         if (key == KeyEvent.VK_RIGHT) rightPressed = true;
         if (key == KeyEvent.VK_SPACE && (isGrounded || coyoteTimeTimer > 0)) jump();  // Jump if grounded or within coyote time
@@ -86,6 +90,8 @@ public class Player {
     }
 
     public void keyReleased(int key) {
+    	if (!controlsEnabled) return;
+    	
         if (key == KeyEvent.VK_LEFT) leftPressed = false;
         if (key == KeyEvent.VK_RIGHT) rightPressed = false;
         updateVelocity();
@@ -98,6 +104,8 @@ public class Player {
     }
 
     public void jump() {
+    	if (!controlsEnabled) return;
+    	
         if (isGrounded || coyoteTimeTimer > 0) {  // Only jump if grounded or within coyote time
             veloY = JUMP_STRENGTH;
             isJumping = true;
@@ -105,6 +113,12 @@ public class Player {
             coyoteTimeTimer = 0;  // Reset coyote time when the player jumps
         }
     }
+    
+    public void disableControl() {
+        controlsEnabled = false;
+        veloX = 0;
+    }
+
 
     public void update(double dt, List<Coin> coins, List<Tile> map) {
         // Horizontal movement

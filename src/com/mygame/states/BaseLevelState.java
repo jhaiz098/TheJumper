@@ -2,6 +2,7 @@ package com.mygame.states;
 
 import com.mygame.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.ArrayList;
@@ -11,6 +12,18 @@ public abstract class BaseLevelState implements GameState {
     protected List<Tile> map;
     protected List<Coin> coins;  // List of coins in the level
 
+    protected boolean showFinishUI = false;
+    
+    protected Goal goal;
+
+    protected int maxCoins = 0;
+    protected int collectedCoins = 0;
+
+    protected boolean levelFinished = false;
+    protected int starsEarned = 0;
+
+    
+    
     private int cachedOriginX = 0;
     private int cachedOriginY = 0;
 
@@ -22,6 +35,32 @@ public abstract class BaseLevelState implements GameState {
         coins = new ArrayList<>();  // Initialize the coins list
     }
 
+    protected void setGoal(int x, int y, String spritePath) {
+        goal = new Goal(x, y, spritePath);
+    }
+
+    protected void finalizeLevel() {
+        if (maxCoins == 0) {
+            starsEarned = 3;
+            levelFinished = true;
+            showFinishUI = true; // ← ADD
+            return;
+        }
+
+        collectedCoins = maxCoins - coins.size();
+        float ratio = (float) collectedCoins / (float) maxCoins;
+
+        if (ratio >= 1.0f) starsEarned = 3;
+        else if (ratio >= 0.66f) starsEarned = 2;
+        else if (ratio >= 0.33f) starsEarned = 1;
+        else starsEarned = 0;
+
+        levelFinished = true;
+        showFinishUI = true; // ← ADD
+    }
+    
+
+    
     // Add a tile to the map (same as before)
     protected void addTile(int tx, int ty, int tileIndex, int zIndex, boolean solid) {
         BufferedImage[] tileset = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
@@ -42,6 +81,7 @@ public abstract class BaseLevelState implements GameState {
         for (int[] pos : positions) {
             addCoin(pos[0], pos[1], spriteSheetPath);
         }
+        maxCoins = positions.size();
     }
 
 
@@ -96,10 +136,38 @@ public abstract class BaseLevelState implements GameState {
         int drawX = cachedOriginX - camX;
         int drawY = cachedOriginY - camY;
         g.drawImage(cachedMap, drawX, drawY, null);
-    }
+        
+        // Always show controls hint AFTER level is finished
+        if (showFinishUI) {
+            g.setFont(new Font("Arial", Font.PLAIN, 14));
+            g.setColor(new Color(255, 255, 255, 255));
+            g.drawString("ESC - Level Select   |   R - Restart Level | N - Next Level", 300, 100);
+        }
 
+    }
+    protected abstract void restartLevel();
+    protected abstract void nextLevel();
+    protected abstract void goToLevelSelect();
     @Override
-    public void keyPressed(int key) {}
+    public void keyPressed(int key) {
+//        if (!levelFinished) return;
+
+        if (key == KeyEvent.VK_ESCAPE) {
+            goToLevelSelect();
+        }
+
+        if (key == KeyEvent.VK_R) {
+            restartLevel();
+        }
+        
+        if (key == KeyEvent.VK_N) {
+            nextLevel();
+        }
+    }
+    
+    
+
+    
     @Override
     public void keyReleased(int key) {}
     @Override
@@ -122,8 +190,25 @@ public abstract class BaseLevelState implements GameState {
         // Draw the number of coins
         g.setColor(Color.WHITE); // Set text color to white (you can change this)
         g.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and style
-        String coinCountText = "Coins: " + coins.size(); // Get the coin count
+        String coinCountText = "Coins: " + collectedCoins + " / " + maxCoins;
         g.drawString(coinCountText, 10, 30); // Draw the coin count at the top-left corner
+        
+        if (levelFinished) {
+            g.setColor(new Color(0, 0, 0, 180));
+            g.fillRect(0, 0, 900, 600);
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 26));
+            g.drawString("LEVEL COMPLETE", 330, 150);
+
+            g.setFont(new Font("Arial", Font.BOLD, 22));
+            g.drawString("Stars: " + starsEarned + " / 3", 360, 200);
+
+            g.setFont(new Font("Arial", Font.PLAIN, 18));
+            g.drawString("Press ESC - Level Select", 310, 260);
+            g.drawString("Press R - Retry Level", 330, 290);
+        }
+
     }
 
 }

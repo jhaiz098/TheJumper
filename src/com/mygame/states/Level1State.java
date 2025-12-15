@@ -25,6 +25,8 @@ public class Level1State extends BaseLevelState {
         coinPositions.add(new int[]{100, 300});
         coinPositions.add(new int[]{200, 350});
         coinPositions.add(new int[]{300, 400});
+        
+        setGoal(500, 400, "/resources/sprites/goal.png");
 
         // Add coins to the level
         addCoins(coinPositions, "/resources/sprites/coin.png");
@@ -88,13 +90,22 @@ public class Level1State extends BaseLevelState {
 
     @Override
     public void update(double dt) {
-        player.update(dt, coins, map);  // Pass the coins list to the player
 
-        // Render coins (they will be updated automatically)
+        if (!levelFinished) {
+            player.update(dt, coins, map);
+
+            // Check goal collision
+            if (goal != null && player.getBounds().intersects(goal.getBounds())) {
+                finalizeLevel();
+//                player.disableControl(); // new method (below)
+            }
+        }
+
         for (Coin coin : coins) {
             coin.update();
         }
     }
+
 
 
     @Override
@@ -117,12 +128,24 @@ public class Level1State extends BaseLevelState {
         String coinCountText = "Coins: " + coins.size(); // Get the coin count
         g.drawString(coinCountText, 10, 30); // Draw the coin count at the top-left corner
         
+        if (goal != null) {
+            goal.drawAt(g, camX, camY);
+        }
+
+        if (levelFinished) {
+            g.setColor(Color.YELLOW);
+            g.setFont(new Font("Arial", Font.BOLD, 28));
+            g.drawString("STARS: " + starsEarned + " / 3", 380, 200);
+        }
+
+        
         // Draw the player
         player.drawAt(g, camX, camY);
     }
 
     @Override
     public void keyPressed(int key) {
+    	super.keyPressed(key);
         player.keyPressed(key);
     }
 
@@ -130,4 +153,21 @@ public class Level1State extends BaseLevelState {
     public void keyReleased(int key) {
         player.keyReleased(key);
     }
+    
+    @Override
+    protected void restartLevel() {
+    	gsm.setState(GameStateManager.LEVEL_1);
+    }
+
+    @Override
+    protected void nextLevel() {
+    	gsm.setState(GameStateManager.LEVEL_2);
+    }
+
+    @Override
+    protected void goToLevelSelect() {
+    	gsm.setState(GameStateManager.MAIN_MENU);
+    }
+
+
 }
