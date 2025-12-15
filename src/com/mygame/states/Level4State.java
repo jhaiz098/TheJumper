@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import com.mygame.Coin;
 import com.mygame.GameStateManager;
 import com.mygame.Player;
 import com.mygame.TileLoader;
@@ -55,7 +56,12 @@ public class Level4State extends BaseLevelState{
     
     @Override
     public void update(double dt) {
-//        player.update(dt, map);
+    	player.update(dt, coins, map);  // Pass the coins list to the player
+
+        // Render coins (they will be updated automatically)
+        for (Coin coin : coins) {
+            coin.update();
+        }
     }
 
     @Override

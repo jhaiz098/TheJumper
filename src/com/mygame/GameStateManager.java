@@ -25,8 +25,8 @@ public class GameStateManager {
             case LEVEL_1 -> current = new Level1State(this);
             case LEVEL_2 -> current = new Level2State(this);
             case LEVEL_3 -> current = new Level3State(this);
-//            case LEVEL_4 -> current = new Level4State(this);
-//            case LEVEL_5 -> current = new Level5State(this);
+            case LEVEL_4 -> current = new Level4State(this);
+            case LEVEL_5 -> current = new Level5State(this);
 //            case LEVEL_6 -> current = new Level6State(this);
 //            case LEVEL_7 -> current = new Level7State(this);
 //            case LEVEL_8 -> current = new Level8State(this);
