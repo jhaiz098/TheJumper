@@ -37,6 +37,8 @@ public class Level1State extends BaseLevelState {
                 addTile(i, 10, 0, 1, true); // inherited method
             }
             
+            addTile(0,7,0,1,true);
+            
             for (int x = -2; x < 9; x++) {
                 for (int y = 11; y < 13; y++) {
                     addTile(x, y, 16, 1, true);
