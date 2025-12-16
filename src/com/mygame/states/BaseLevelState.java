@@ -141,7 +141,7 @@ public abstract class BaseLevelState implements GameState {
         if (showFinishUI) {
             g.setFont(new Font("Arial", Font.PLAIN, 14));
             g.setColor(new Color(255, 255, 255, 255));
-            g.drawString("ESC - Level Select   |   R - Restart Level | N - Next Level", 300, 100);
+            g.drawString("ESC - Level Select   |   R - Restart Level   |   N - Next Level", 300, 500);
         }
 
     }

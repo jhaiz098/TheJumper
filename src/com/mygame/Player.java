@@ -216,9 +216,9 @@ public class Player {
         }
 
         // Optional: Draw hitbox for debugging
-        g.setColor(Color.RED);
-        Rectangle hb = getBounds();
-        g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
+//        g.setColor(Color.RED);
+//        Rectangle hb = getBounds();
+//        g.drawRect(hb.x - camX, hb.y - camY, hb.width, hb.height);
     }
 
     public Rectangle getBounds() {

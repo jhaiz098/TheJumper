@@ -59,10 +59,37 @@ public class Level2State extends BaseLevelState{
             	addTile(i,9,0,1,true);
             }
             
+            //BG
+            for(int x=-15; x<50;x++) {
+            	for(int y=13;y<25;y++) {
+            		addTile(x,y,240,0,false);
+            	}
+            }
+            
+            for(int x=-15; x<50;x++) {
+            	addTile(x,12,224,0,false);
+            }
+            
+            for(int x=-15; x<50;x++) {
+            	for(int y=5;y<12;y++) {
+            		addTile(x,y,208,0,false);
+            	}
+            }
+            
+            for(int x=-15; x<50;x++) {
+            	addTile(x,4,192 ,0,false);
+            }
+            
+            for(int x=-15; x<50;x++) {
+            	for(int y=-5;y<4;y++) {
+            		addTile(x,y,176,0,false);
+            	}
+            }
+            
         }
 
         // Create player
-        player = new Player(50, 100, "/resources/sprites/knight.png");
+        player = new Player(3 * 16 *3, 6 * 16 *3, "/resources/sprites/knight.png");
     }
     
     @Override
@@ -101,11 +128,27 @@ public class Level2State extends BaseLevelState{
 
     @Override
     public void keyPressed(int key) {
+    	super.keyPressed(key);
         player.keyPressed(key);
     }
 
     @Override
     public void keyReleased(int key) {
         player.keyReleased(key);
+    }
+    
+    @Override
+    protected void restartLevel() {
+    	gsm.setState(GameStateManager.LEVEL_2);
+    }
+
+    @Override
+    protected void nextLevel() {
+    	gsm.setState(GameStateManager.LEVEL_3);
+    }
+
+    @Override
+    protected void goToLevelSelect() {
+    	gsm.setState(GameStateManager.MAIN_MENU);
     }
 }

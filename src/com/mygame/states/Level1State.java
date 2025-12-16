@@ -12,7 +12,9 @@ public class Level1State extends BaseLevelState {
     private Player player;
     private BufferedImage[] tileset;
     private Coin coin;  // Coin should be a class-level variable
-
+    private int goalX=29;
+    private int goalY=10;
+    
     public Level1State(GameStateManager gsm) {
         this.gsm = gsm;
 
@@ -22,11 +24,11 @@ public class Level1State extends BaseLevelState {
         // Initialize coin
         // Define coin positions (x, y)
         List<int[]> coinPositions = new ArrayList<>();
-        coinPositions.add(new int[]{100, 300});
-        coinPositions.add(new int[]{200, 350});
-        coinPositions.add(new int[]{300, 400});
+        coinPositions.add(new int[]{16 *16 * 3, 9 *16 * 3});
+        coinPositions.add(new int[]{8 *16 * 3, 8 *16 * 3});
+        coinPositions.add(new int[]{23 *16 * 3, 8 *16 * 3});
         
-        setGoal(500, 400, "/resources/sprites/goal.png");
+        setGoal(goalX * 16 * 3, goalY * 16 * 3, "/resources/sprites/goal.png");
 
         // Add coins to the level
         addCoins(coinPositions, "/resources/sprites/coin.png");
@@ -38,8 +40,6 @@ public class Level1State extends BaseLevelState {
             for (int i = -2; i <= 8; i++) {
                 addTile(i, 10, 0, 1, true); // inherited method
             }
-            
-            addTile(0,7,0,1,true);
             
             for (int x = -2; x < 9; x++) {
                 for (int y = 11; y < 13; y++) {
@@ -82,10 +82,38 @@ public class Level1State extends BaseLevelState {
                     addTile(x, y, 16, 1, true);
                 }
             }
+            
+            
+            //BG
+            for(int x=-15; x<40;x++) {
+            	for(int y=13;y<25;y++) {
+            		addTile(x,y,240,0,false);
+            	}
+            }
+            
+            for(int x=-15; x<40;x++) {
+            	addTile(x,12,224,0,false);
+            }
+            
+            for(int x=-15; x<40;x++) {
+            	for(int y=5;y<12;y++) {
+            		addTile(x,y,208,0,false);
+            	}
+            }
+            
+            for(int x=-15; x<40;x++) {
+            	addTile(x,4,192 ,0,false);
+            }
+            
+            for(int x=-15; x<40;x++) {
+            	for(int y=-5;y<4;y++) {
+            		addTile(x,y,176,0,false);
+            	}
+            }
         }
 
         // Create player
-        player = new Player(100, 100, "/resources/sprites/knight.png");
+        player = new Player(3 * 16 * 3, 6 * 16 * 3, "/resources/sprites/knight.png");
     }
 
     @Override
@@ -125,7 +153,7 @@ public class Level1State extends BaseLevelState {
         // Draw the number of coins
         g.setColor(Color.WHITE); // Set text color to white (you can change this)
         g.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and style
-        String coinCountText = "Coins: " + coins.size(); // Get the coin count
+        String coinCountText = "Coins Remaining: " + coins.size(); // Get the coin count
         g.drawString(coinCountText, 10, 30); // Draw the coin count at the top-left corner
         
         if (goal != null) {
