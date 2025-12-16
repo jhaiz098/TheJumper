@@ -89,31 +89,31 @@ public class Level1State extends BaseLevelState {
             
             
             //BG
-//            for(int x=-15; x<40;x++) {
-//            	for(int y=13;y<25;y++) {
-//            		addTile(x,y,240,0,false);
-//            	}
-//            }
-//            
-//            for(int x=-15; x<40;x++) {
-//            	addTile(x,12,224,0,false);
-//            }
-//            
-//            for(int x=-15; x<40;x++) {
-//            	for(int y=5;y<12;y++) {
-//            		addTile(x,y,208,0,false);
-//            	}
-//            }
-//            
-//            for(int x=-15; x<40;x++) {
-//            	addTile(x,4,192 ,0,false);
-//            }
-//            
-//            for(int x=-15; x<40;x++) {
-//            	for(int y=-5;y<4;y++) {
-//            		addTile(x,y,176,0,false);
-//            	}
-//            }
+            for(int x=-15; x<40;x++) {
+            	for(int y=13;y<25;y++) {
+            		addTile(x,y,240,0,false);
+            	}
+            }
+            
+            for(int x=-15; x<40;x++) {
+            	addTile(x,12,224,0,false);
+            }
+            
+            for(int x=-15; x<40;x++) {
+            	for(int y=5;y<12;y++) {
+            		addTile(x,y,208,0,false);
+            	}
+            }
+            
+            for(int x=-15; x<40;x++) {
+            	addTile(x,4,192 ,0,false);
+            }
+            
+            for(int x=-15; x<40;x++) {
+            	for(int y=-5;y<4;y++) {
+            		addTile(x,y,176,0,false);
+            	}
+            }
         }
 
         // Create player

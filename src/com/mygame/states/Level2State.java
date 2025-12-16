@@ -31,47 +31,51 @@ public class Level2State extends BaseLevelState{
     	this.gsm = gsm;
     	
     	platforms = new ArrayList<>();
-    	
-    	BufferedImage platformSheet = null;
+
+    	BufferedImage platformSheet;
+    	BufferedImage plat16;
+    	BufferedImage plat32;
 
     	try {
     	    platformSheet = ImageIO.read(
     	        getClass().getResource("/resources/sprites/platforms.png")
     	    );
+
+    	    plat16 = platformSheet.getSubimage(0, 0, 16, 16);
+    	    plat32 = platformSheet.getSubimage(16, 0, 32, 16);
+
     	} catch (Exception e) {
     	    e.printStackTrace();
+    	    return;
     	}
+
 
     	if (platformSheet == null) {
     	    throw new RuntimeException("platforms.png not found!");
     	}
-
-    	BufferedImage plat16 = platformSheet.getSubimage(0, 0, 16, 8);
-    	BufferedImage plat32 = platformSheet.getSubimage(16, 0, 32, 8);
-
-    	int SCALE = 3;
-
-    	// ground platform
+    	
     	platforms.add(
-    	    new Platform(
-    	        39 * 16 * SCALE,
-    	        -1 * 16 * SCALE,
-    	        32 * SCALE,
-    	        8 * SCALE,
-    	        plat32
-    	    )
-    	);
+    		    new Platform(
+    		        43,-1, 
+    		        24,-1,
+    		        16,
+    		        16,
+    		        plat16,
+    		        0f
+    		    )
+    		);
 
-    	// mid-air platform
-    	platforms.add(
-    	    new Platform(
-    	        43 * 16 * SCALE,
-    	        -1 * 16 * SCALE,
-    	        32 * SCALE,
-    	        8 * SCALE,
-    	        plat32
-    	    )
-    	);
+    		platforms.add(
+    		    new Platform(
+    		        39,-1, 
+    		        39,-1,
+    		        32, 
+    		        16,
+    		        plat32,
+    		        0f
+    		    )
+    		);
+
 
 
 //    	music = new Sound("/resources/music/8-bit-game-158815.wav");
@@ -134,31 +138,31 @@ public class Level2State extends BaseLevelState{
             }
             
             //BG
-//            for(int x=-15; x<50;x++) {
-//            	for(int y=13;y<25;y++) {
-//            		addTile(x,y,240,0,false);
-//            	}
-//            }
-//            
-//            for(int x=-15; x<50;x++) {
-//            	addTile(x,12,224,0,false);
-//            }
-//            
-//            for(int x=-15; x<50;x++) {
-//            	for(int y=5;y<12;y++) {
-//            		addTile(x,y,208,0,false);
-//            	}
-//            }
-//            
-//            for(int x=-15; x<50;x++) {
-//            	addTile(x,4,192 ,0,false);
-//            }
-//            
-//            for(int x=-15; x<50;x++) {
-//            	for(int y=-5;y<4;y++) {
-//            		addTile(x,y,176,0,false);
-//            	}
-//            }
+            for(int x=-15; x<50;x++) {
+            	for(int y=13;y<25;y++) {
+            		addTile(x,y,240,0,false);
+            	}
+            }
+            
+            for(int x=-15; x<50;x++) {
+            	addTile(x,12,224,0,false);
+            }
+            
+            for(int x=-15; x<50;x++) {
+            	for(int y=5;y<12;y++) {
+            		addTile(x,y,208,0,false);
+            	}
+            }
+            
+            for(int x=-15; x<50;x++) {
+            	addTile(x,4,192 ,0,false);
+            }
+            
+            for(int x=-15; x<50;x++) {
+            	for(int y=-5;y<4;y++) {
+            		addTile(x,y,176,0,false);
+            	}
+            }
             
         }
 
@@ -176,6 +180,7 @@ public class Level2State extends BaseLevelState{
 
 
         	for (Platform p : platforms) {
+        		p.update(dt);
         	    player.collideWithPlatform(p);
         	}
 

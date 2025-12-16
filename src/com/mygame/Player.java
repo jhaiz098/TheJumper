@@ -132,14 +132,17 @@ public class Player {
         Rectangle pr = p.getCollider();
 
         if (pb.intersects(pr)) {
-            if (veloY > 0) { // falling
+            if (veloY > 0) {
                 y = pr.y - (13 * SCALE + 15 * SCALE);
                 veloY = 0;
                 isGrounded = true;
                 isJumping = false;
                 coyoteTimeTimer = coyoteTime;
+
+                // ride platform
+                x += p.getDeltaX();
             }
-        }
+        } 
     }
 
     
