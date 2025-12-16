@@ -40,18 +40,17 @@ public class GamePanel extends JPanel implements Runnable, MouseMotionListener, 
     public void run() {
         final double dt = 1.0 / 60.0;
         while (true) {
-            GameState state = gsm.getState();
-            if (state != null) state.update(dt);
+            gsm.update(dt); // <- call GSM update, handles loading swaps
             repaint();
             try { Thread.sleep(16); } catch (InterruptedException ignored) {}
         }
     }
 
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        GameState state = gsm.getState();
-        if (state != null) state.render(g);
+        gsm.render(g);
     }
 
     // MouseMotionListener

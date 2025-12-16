@@ -17,7 +17,9 @@ public class Level1State extends BaseLevelState {
     
     public Level1State(GameStateManager gsm) {
         this.gsm = gsm;
-
+        
+        killY = 1500;
+        
         // Load tileset (example: 16x16 tiles)
         tileset = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
         
@@ -119,22 +121,31 @@ public class Level1State extends BaseLevelState {
     @Override
     public void update(double dt) {
 
-        if (!levelFinished) {
-            player.update(dt, coins, map);
+        if (!paused && !levelFinished && !playerDead) {
+            player.update(dt, coins, map, coinSound);
 
-            // Check goal collision
             if (goal != null && player.getBounds().intersects(goal.getBounds())) {
                 finalizeLevel();
-//                player.disableControl(); // new method (below)
             }
         }
 
         for (Coin coin : coins) {
             coin.update();
         }
+
+        if (!playerDead && player.getY() > killY) {
+            onPlayerDeath();
+        }
     }
 
 
+    protected void playerDied() {
+        // Option 1: Restart level immediately
+        restartLevel();
+
+        // Option 2: Show “death” animation/UI before restarting
+        // levelFinished = true; // optionally block player input
+    }
 
     @Override
     public void render(Graphics g) {
@@ -169,13 +180,34 @@ public class Level1State extends BaseLevelState {
         
         // Draw the player
         player.drawAt(g, camX, camY);
+        
+
+        if (showFinishUI && playerDead) {
+            g.setColor(new Color(0, 0, 0, 180));
+            g.fillRect(0, 0, 900, 600);
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 26));
+            g.drawString("YOU DIED", 380, 200);
+
+            g.setFont(new Font("Arial", Font.PLAIN, 14));
+            g.drawString(
+                "ESC - Level Select   |   R - Restart Level",
+                300, 500
+            );
+        }
+
     }
 
     @Override
     public void keyPressed(int key) {
-    	super.keyPressed(key);
+        if (paused) {
+            super.keyPressed(key);
+            return;
+        }
         player.keyPressed(key);
     }
+
 
     @Override
     public void keyReleased(int key) {

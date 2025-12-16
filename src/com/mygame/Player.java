@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+
+import java.util.Iterator;
 import java.util.List;
 import java.awt.event.KeyEvent;
 
@@ -120,7 +122,7 @@ public class Player {
     }
 
 
-    public void update(double dt, List<Coin> coins, List<Tile> map) {
+    public void update(double dt, List<Coin> coins, List<Tile> map, Sound coinSound) {
         // Horizontal movement
         x += veloX * dt;
 
@@ -164,13 +166,16 @@ public class Player {
         }
 
         // Check for collisions with coins
-        for (Coin coin : coins) {
+        Iterator<Coin> it = coins.iterator();
+        while (it.hasNext()) {
+            Coin coin = it.next();
             if (getBounds().intersects(coin.getBounds())) {
-                // If collision detected, remove the coin from the list
-                coins.remove(coin);
-                break;  // Remove only one coin per frame
+                it.remove(); // safe removal
+                coinSound.play();
+                break;
             }
         }
+
 
         // Update coyote time timer (only reduce it if the player is not grounded)
         if (!isGrounded) {

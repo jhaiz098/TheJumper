@@ -22,17 +22,28 @@ public abstract class BaseLevelState implements GameState {
     protected boolean levelFinished = false;
     protected int starsEarned = 0;
 
-    
+    protected int killY = 1000;
+
+    protected boolean playerDead = false;
+    protected boolean paused = false;
+
     
     private int cachedOriginX = 0;
     private int cachedOriginY = 0;
 
     private BufferedImage cachedMap = null;
     private boolean needsRedraw = true;
+    
+    protected Sound coinSound = new Sound("/resources/sounds/coin.wav");
+    protected Sound music = new Sound("/resources/music/time_for_adventure.wav");
 
     public BaseLevelState() {
         map = new ArrayList<>();
-        coins = new ArrayList<>();  // Initialize the coins list
+        coins = new ArrayList<>();
+
+        if (music != null) {
+            music.loop();
+        }
     }
 
     protected void setGoal(int x, int y, String spritePath) {
@@ -59,7 +70,15 @@ public abstract class BaseLevelState implements GameState {
         showFinishUI = true; // ← ADD
     }
     
-
+    protected void onPlayerDeath() {
+        playerDead = true;
+        paused = true;
+        showFinishUI = true;
+    }
+    
+    protected void setKillY(int y) {
+        killY = y;
+    }
     
     // Add a tile to the map (same as before)
     protected void addTile(int tx, int ty, int tileIndex, int zIndex, boolean solid) {
