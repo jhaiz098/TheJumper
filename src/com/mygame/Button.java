@@ -49,7 +49,7 @@ public class Button {
         }
 
         // Debug collider (always red)
-        g.setColor(Color.RED);
-        g.drawRect(x, y, width, height);
+//        g.setColor(Color.RED);
+//        g.drawRect(x, y, width, height);
     }
 }

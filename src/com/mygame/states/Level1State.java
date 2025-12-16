@@ -204,12 +204,15 @@ public class Level1State extends BaseLevelState {
 
     @Override
     public void keyPressed(int key) {
-        if (paused) {
-            super.keyPressed(key);
-            return;
+        // Let the base handle level navigation first
+        super.keyPressed(key);
+
+        // Only pass input to the player if not paused or level not finished
+        if (!paused && !levelFinished && !playerDead) {
+            player.keyPressed(key);
         }
-        player.keyPressed(key);
     }
+
 
 
     @Override

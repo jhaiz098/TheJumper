@@ -30,7 +30,7 @@ public class TitleState implements GameState {
 
     	if (music != null && !music.isPlaying()) {
             music.loop();
-            System.out.println("Menu music started");
+//            System.out.println("Menu music started");
         }
     	
     	BufferedImage playButtonSprite = null,

@@ -34,6 +34,9 @@ public abstract class BaseLevelState implements GameState {
     private BufferedImage cachedMap = null;
     private boolean needsRedraw = true;
     
+    protected Sound levelCompleteSound = new Sound("/resources/sounds/level-up-431472.wav");
+    protected Sound deathSound = new Sound("/resources/sounds/8-bit-video-game-lose-sound-version-4-145477.wav");
+    
     protected Sound coinSound = new Sound("/resources/sounds/coin.wav");
     protected Sound music;
     
@@ -81,12 +84,16 @@ public abstract class BaseLevelState implements GameState {
 
         levelFinished = true;
         showFinishUI = true; // ← ADD
+        
+        if (levelCompleteSound != null) levelCompleteSound.play();
     }
     
     protected void onPlayerDeath() {
         playerDead = true;
         paused = true;
         showFinishUI = true;
+
+        if (deathSound != null) deathSound.play();
     }
     
     protected void setKillY(int y) {
@@ -180,22 +187,25 @@ public abstract class BaseLevelState implements GameState {
     protected abstract void restartLevel();
     protected abstract void nextLevel();
     protected abstract void goToLevelSelect();
+    
     @Override
     public void keyPressed(int key) {
-//        if (!levelFinished) return;
-
+        // ESC always works
         if (key == KeyEvent.VK_ESCAPE) {
             goToLevelSelect();
         }
 
+        // R always works (restart)
         if (key == KeyEvent.VK_R) {
             restartLevel();
         }
-        
-        if (key == KeyEvent.VK_N) {
+
+        // N only works if the level is finished (not dead)
+        if (key == KeyEvent.VK_N && levelFinished) {
             nextLevel();
         }
     }
+
     
     
 
