@@ -35,17 +35,30 @@ public abstract class BaseLevelState implements GameState {
     private boolean needsRedraw = true;
     
     protected Sound coinSound = new Sound("/resources/sounds/coin.wav");
-    protected Sound music = new Sound("/resources/music/time_for_adventure.wav");
-
+    protected Sound music;
+    
+    protected boolean initialized = false;
+    
     public BaseLevelState() {
         map = new ArrayList<>();
         coins = new ArrayList<>();
-
+    }
+    public void onEnter() {
         if (music != null) {
+            music.stop(); // reset
             music.loop();
+            System.out.println("Music started");
+        } else {
+            System.out.println("Music is null!");
         }
     }
 
+
+    protected void stopMusic() {
+        if (music != null) music.stop();
+    }
+
+    
     protected void setGoal(int x, int y, String spritePath) {
         goal = new Goal(x, y, spritePath);
     }
@@ -189,10 +202,16 @@ public abstract class BaseLevelState implements GameState {
     
     @Override
     public void keyReleased(int key) {}
+    
     @Override
     public void update(double dt) {
+        if (!initialized) {
+            initialized = true;
+            onEnter(); // <-- start music only once, during first update
+        }
+
         for (Coin coin : coins) {
-            coin.update();  // Update each coin's animation
+            coin.update();  // update coin animation
         }
     }
 

@@ -6,7 +6,7 @@ import java.net.URL;
 
 public class Sound {
 
-    private Clip clip;
+    public Clip clip;
 
     public Sound(String path) {
         try {
@@ -34,4 +34,9 @@ public class Sound {
     public void stop() {
         if (clip != null) clip.stop();
     }
+    
+    public boolean isPlaying() {
+        return clip != null && clip.isRunning();
+    }
+    
 }

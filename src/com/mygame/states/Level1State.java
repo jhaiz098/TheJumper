@@ -18,6 +18,8 @@ public class Level1State extends BaseLevelState {
     public Level1State(GameStateManager gsm) {
         this.gsm = gsm;
         
+        music = new Sound("/resources/music/8-bit-game-158815.wav");
+        
         killY = 1500;
         
         // Load tileset (example: 16x16 tiles)
@@ -120,7 +122,8 @@ public class Level1State extends BaseLevelState {
 
     @Override
     public void update(double dt) {
-
+    	super.update(dt);
+    	
         if (!paused && !levelFinished && !playerDead) {
             player.update(dt, coins, map, coinSound);
 
@@ -216,18 +219,22 @@ public class Level1State extends BaseLevelState {
     
     @Override
     protected void restartLevel() {
-    	gsm.setState(GameStateManager.LEVEL_1);
-    }
-
-    @Override
-    protected void nextLevel() {
-    	gsm.setState(GameStateManager.LEVEL_2);
+        stopMusic();
+        gsm.setState(GameStateManager.LEVEL_1);
     }
 
     @Override
     protected void goToLevelSelect() {
-    	gsm.setState(GameStateManager.MAIN_MENU);
+        stopMusic();
+        gsm.setState(GameStateManager.MAIN_MENU);
     }
+
+    @Override
+    protected void nextLevel() {
+        stopMusic();
+        gsm.setState(GameStateManager.LEVEL_2);
+    }
+
 
 
 }

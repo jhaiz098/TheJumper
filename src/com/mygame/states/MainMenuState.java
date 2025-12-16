@@ -3,6 +3,7 @@ package com.mygame.states;
 import com.mygame.Button;
 import com.mygame.GameState;
 import com.mygame.GameStateManager;
+import com.mygame.Sound;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -19,8 +20,17 @@ public class MainMenuState implements GameState {
     private Button backButton;
     private BufferedImage bgImage = null;
     
+    private Sound music;
+    
     public MainMenuState(GameStateManager gsm) {
         this.gsm = gsm;
+        
+        music = new Sound("/resources/music/time_for_adventure.wav");
+        
+        if (music != null && !music.isPlaying()) {
+            music.loop();
+            System.out.println("Menu music started");
+        }
         
         BufferedImage backButtonSprite = null,
         			backHoveredButtonSprite = null;
@@ -37,7 +47,11 @@ public class MainMenuState implements GameState {
         
         backButton = new Button(10, 10, backButtonSprite, backHoveredButtonSprite, 4);
     }
-
+    
+    private void stopMusic() {
+        if (music != null) music.stop();
+    }
+    
     @Override
     public void update(double dt) {
         // empty for now
@@ -69,7 +83,10 @@ public class MainMenuState implements GameState {
     
     @Override
     public void keyPressed(int key) {
-    	if (key == KeyEvent.VK_1) gsm.setState(GameStateManager.LEVEL_1);
+    	if (key == KeyEvent.VK_1) {
+    		gsm.setState(GameStateManager.LEVEL_1);
+    		stopMusic();
+    	}
         if (key == KeyEvent.VK_2) gsm.setState(GameStateManager.LEVEL_2);
         if (key == KeyEvent.VK_3) gsm.setState(GameStateManager.LEVEL_3);
         if (key == KeyEvent.VK_4) gsm.setState(GameStateManager.LEVEL_4);

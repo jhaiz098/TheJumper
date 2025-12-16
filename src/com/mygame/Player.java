@@ -42,6 +42,8 @@ public class Player {
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     
+    private Sound jumpSound;  // Add inside Player
+    
     // Track if the player is facing left or right
     private boolean facingLeft = false;
 
@@ -79,6 +81,9 @@ public class Player {
             e.printStackTrace();
             currentFrame = new BufferedImage(SPRITE_WIDTH, SPRITE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         }
+        
+        // Load the jump sound
+        jumpSound = new Sound("/resources/sounds/jump.wav");
     }
 
     // input handling
@@ -87,7 +92,9 @@ public class Player {
     	
         if (key == KeyEvent.VK_LEFT) leftPressed = true;
         if (key == KeyEvent.VK_RIGHT) rightPressed = true;
-        if (key == KeyEvent.VK_SPACE && (isGrounded || coyoteTimeTimer > 0)) jump();  // Jump if grounded or within coyote time
+        if (key == KeyEvent.VK_SPACE && (isGrounded || coyoteTimeTimer > 0)) {
+        	jump();  // Jump if grounded or within coyote time
+        }
         updateVelocity();
     }
 
@@ -113,6 +120,10 @@ public class Player {
             isJumping = true;
             isGrounded = false;  // Player is no longer on the ground
             coyoteTimeTimer = 0;  // Reset coyote time when the player jumps
+            
+            if (jumpSound != null) {
+                jumpSound.play();  // play jump sound
+            }
         }
     }
     

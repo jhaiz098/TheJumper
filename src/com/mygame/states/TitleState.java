@@ -3,6 +3,7 @@ package com.mygame.states;
 import com.mygame.Button;
 import com.mygame.GameState;
 import com.mygame.GameStateManager;
+import com.mygame.Sound;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -18,10 +19,19 @@ public class TitleState implements GameState {
     private Button playButton;
     private Button quitButton;
     
+    private Sound music;
+    
     private BufferedImage bgImage = null;
     
     public TitleState(GameStateManager gsm) {
     	this.gsm = gsm;
+    	
+    	music = new Sound("/resources/music/time_for_adventure.wav");
+
+    	if (music != null && !music.isPlaying()) {
+            music.loop();
+            System.out.println("Menu music started");
+        }
     	
     	BufferedImage playButtonSprite = null,
     			quitButtonSprite = null,
@@ -52,10 +62,16 @@ public class TitleState implements GameState {
 
     @Override
     public void mousePressed(int mx, int my) {
-        if (playButton.isClicked(mx, my)) gsm.setState(GameStateManager.MAIN_MENU);
+        if (playButton.isClicked(mx, my)) {
+        	gsm.setState(GameStateManager.MAIN_MENU);
+        	stopMusic();
+        }
         if (quitButton.isClicked(mx, my)) System.exit(0);
     }
 
+    private void stopMusic() {
+        if (music != null) music.stop();
+    }
     
     @Override public void update(double dt) {}
 
