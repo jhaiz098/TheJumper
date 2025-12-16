@@ -19,6 +19,11 @@ public abstract class BaseLevelState implements GameState {
     protected int maxCoins = 0;
     protected int collectedCoins = 0;
 
+    // ===== TIMER =====
+    protected double levelTime = 0.0;   // seconds
+    protected boolean timerRunning = true;
+
+    
     protected boolean levelFinished = false;
     protected int starsEarned = 0;
 
@@ -45,6 +50,8 @@ public abstract class BaseLevelState implements GameState {
     public BaseLevelState() {
         map = new ArrayList<>();
         coins = new ArrayList<>();
+        
+        music = new Sound("/resources/music/8-bit-game-158815.wav");
     }
     public void onEnter() {
         if (music != null) {
@@ -71,6 +78,7 @@ public abstract class BaseLevelState implements GameState {
             starsEarned = 3;
             levelFinished = true;
             showFinishUI = true; // ← ADD
+            timerRunning = false;
             return;
         }
 
@@ -92,6 +100,7 @@ public abstract class BaseLevelState implements GameState {
         playerDead = true;
         paused = true;
         showFinishUI = true;
+        timerRunning = false;
 
         if (deathSound != null) deathSound.play();
     }
@@ -175,14 +184,6 @@ public abstract class BaseLevelState implements GameState {
         int drawX = cachedOriginX - camX;
         int drawY = cachedOriginY - camY;
         g.drawImage(cachedMap, drawX, drawY, null);
-        
-        // Always show controls hint AFTER level is finished
-        if (showFinishUI) {
-            g.setFont(new Font("Arial", Font.PLAIN, 14));
-            g.setColor(new Color(255, 255, 255, 255));
-            g.drawString("ESC - Level Select   |   R - Restart Level   |   N - Next Level", 300, 500);
-        }
-
     }
     protected abstract void restartLevel();
     protected abstract void nextLevel();
@@ -206,10 +207,6 @@ public abstract class BaseLevelState implements GameState {
         }
     }
 
-    
-    
-
-    
     @Override
     public void keyReleased(int key) {}
     
@@ -217,46 +214,65 @@ public abstract class BaseLevelState implements GameState {
     public void update(double dt) {
         if (!initialized) {
             initialized = true;
-            onEnter(); // <-- start music only once, during first update
+            onEnter();
+        }
+
+        // ⏱️ Update timer ONLY while playing
+        if (!paused && !levelFinished && !playerDead && timerRunning) {
+            levelTime += dt;
         }
 
         for (Coin coin : coins) {
-            coin.update();  // update coin animation
+            coin.update();
         }
     }
 
-    @Override
-    public void render(Graphics g) {
-        // Draw the tiles
-        renderTiles(g, 0, 0); // You already have this method for tiles rendering
+    protected void renderUI(Graphics g) {
+        // ⏱ Timer
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.drawString(String.format("Time: %.2f", levelTime), 750, 30);
 
-        // Draw the coins (they will be updated automatically)
-        for (Coin coin : coins) {
-            coin.drawAt(g, 0, 0);  // Draw each coin
-        }
+        // 🪙 Coins
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("Coins: " + collectedCoins + " / " + maxCoins, 10, 30);
 
-        // Draw the number of coins
-        g.setColor(Color.WHITE); // Set text color to white (you can change this)
-        g.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and style
-        String coinCountText = "Coins: " + collectedCoins + " / " + maxCoins;
-        g.drawString(coinCountText, 10, 30); // Draw the coin count at the top-left corner
-        
-        if (levelFinished) {
+        // 🏁 Finish UI
+        if (showFinishUI) {
             g.setColor(new Color(0, 0, 0, 180));
             g.fillRect(0, 0, 900, 600);
 
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 26));
-            g.drawString("LEVEL COMPLETE", 330, 150);
 
-            g.setFont(new Font("Arial", Font.BOLD, 22));
-            g.drawString("Stars: " + starsEarned + " / 3", 360, 200);
+            if (playerDead) {
+                g.drawString("YOU DIED", 380, 200);
+            } else {
+                g.drawString("LEVEL COMPLETE", 330, 150);
+                g.setFont(new Font("Arial", Font.BOLD, 22));
+                g.drawString("Stars: " + starsEarned + " / 3", 360, 200);
+                g.setFont(new Font("Arial", Font.PLAIN, 20));
+                g.drawString(String.format("Time: %.2f seconds", levelTime), 340, 240);
+            }
+        }
+        
+        // 🎮 Controls hint
+        if (showFinishUI) {
+            g.setFont(new Font("Arial", Font.PLAIN, 14));
+            g.setColor(Color.WHITE);
 
-            g.setFont(new Font("Arial", Font.PLAIN, 18));
-            g.drawString("Press ESC - Level Select", 310, 260);
-            g.drawString("Press R - Retry Level", 330, 290);
+            if (levelFinished) {
+                g.drawString(
+                    "ESC - Level Select   |   R - Restart Level   |   N - Next Level",
+                    300, 500
+                );
+            } else if (playerDead) {
+                g.drawString(
+                    "ESC - Level Select   |   R - Restart Level",
+                    330, 500
+                );
+            }
         }
 
     }
-
 }

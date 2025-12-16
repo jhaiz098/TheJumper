@@ -127,13 +127,29 @@ public class Player {
         }
     }
     
+    public void collideWithPlatform(Platform p) {
+        Rectangle pb = getBounds();
+        Rectangle pr = p.getCollider();
+
+        if (pb.intersects(pr)) {
+            if (veloY > 0) { // falling
+                y = pr.y - (13 * SCALE + 15 * SCALE);
+                veloY = 0;
+                isGrounded = true;
+                isJumping = false;
+                coyoteTimeTimer = coyoteTime;
+            }
+        }
+    }
+
+    
     public void disableControl() {
         controlsEnabled = false;
         veloX = 0;
     }
 
 
-    public void update(double dt, List<Coin> coins, List<Tile> map, Sound coinSound) {
+    public int update(double dt, List<Coin> coins, List<Tile> map, Sound coinSound) {
         // Horizontal movement
         x += veloX * dt;
 
@@ -176,17 +192,18 @@ public class Player {
             }
         }
 
-        // Check for collisions with coins
+        int collectedThisFrame = 0;
+
         Iterator<Coin> it = coins.iterator();
         while (it.hasNext()) {
             Coin coin = it.next();
             if (getBounds().intersects(coin.getBounds())) {
-                it.remove(); // safe removal
-                coinSound.play();
-                break;
+                it.remove();
+                collectedThisFrame++;
+                if (coinSound != null) coinSound.play();
+                break; // remove only one per frame
             }
         }
-
 
         // Update coyote time timer (only reduce it if the player is not grounded)
         if (!isGrounded) {
@@ -220,6 +237,7 @@ public class Player {
                 }
             }
         }
+        return collectedThisFrame;
     }
 
     public void drawAt(Graphics g, int camX, int camY) {

@@ -18,7 +18,7 @@ public class Level1State extends BaseLevelState {
     public Level1State(GameStateManager gsm) {
         this.gsm = gsm;
         
-        music = new Sound("/resources/music/8-bit-game-158815.wav");
+//        music = new Sound("/resources/music/8-bit-game-158815.wav");
         
         killY = 1500;
         
@@ -89,31 +89,31 @@ public class Level1State extends BaseLevelState {
             
             
             //BG
-            for(int x=-15; x<40;x++) {
-            	for(int y=13;y<25;y++) {
-            		addTile(x,y,240,0,false);
-            	}
-            }
-            
-            for(int x=-15; x<40;x++) {
-            	addTile(x,12,224,0,false);
-            }
-            
-            for(int x=-15; x<40;x++) {
-            	for(int y=5;y<12;y++) {
-            		addTile(x,y,208,0,false);
-            	}
-            }
-            
-            for(int x=-15; x<40;x++) {
-            	addTile(x,4,192 ,0,false);
-            }
-            
-            for(int x=-15; x<40;x++) {
-            	for(int y=-5;y<4;y++) {
-            		addTile(x,y,176,0,false);
-            	}
-            }
+//            for(int x=-15; x<40;x++) {
+//            	for(int y=13;y<25;y++) {
+//            		addTile(x,y,240,0,false);
+//            	}
+//            }
+//            
+//            for(int x=-15; x<40;x++) {
+//            	addTile(x,12,224,0,false);
+//            }
+//            
+//            for(int x=-15; x<40;x++) {
+//            	for(int y=5;y<12;y++) {
+//            		addTile(x,y,208,0,false);
+//            	}
+//            }
+//            
+//            for(int x=-15; x<40;x++) {
+//            	addTile(x,4,192 ,0,false);
+//            }
+//            
+//            for(int x=-15; x<40;x++) {
+//            	for(int y=-5;y<4;y++) {
+//            		addTile(x,y,176,0,false);
+//            	}
+//            }
         }
 
         // Create player
@@ -125,7 +125,8 @@ public class Level1State extends BaseLevelState {
     	super.update(dt);
     	
         if (!paused && !levelFinished && !playerDead) {
-            player.update(dt, coins, map, coinSound);
+        	int gained = player.update(dt, coins, map, coinSound);
+        	collectedCoins += gained;
 
             if (goal != null && player.getBounds().intersects(goal.getBounds())) {
                 finalizeLevel();
@@ -164,41 +165,14 @@ public class Level1State extends BaseLevelState {
             coin.drawAt(g, camX, camY);
         }
         
-        // Draw the number of coins
-        g.setColor(Color.WHITE); // Set text color to white (you can change this)
-        g.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and style
-        String coinCountText = "Coins Remaining: " + coins.size(); // Get the coin count
-        g.drawString(coinCountText, 10, 30); // Draw the coin count at the top-left corner
-        
         if (goal != null) {
             goal.drawAt(g, camX, camY);
         }
-
-        if (levelFinished) {
-            g.setColor(Color.YELLOW);
-            g.setFont(new Font("Arial", Font.BOLD, 28));
-            g.drawString("STARS: " + starsEarned + " / 3", 380, 200);
-        }
-
         
         // Draw the player
         player.drawAt(g, camX, camY);
         
-
-        if (showFinishUI && playerDead) {
-            g.setColor(new Color(0, 0, 0, 180));
-            g.fillRect(0, 0, 900, 600);
-
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 26));
-            g.drawString("YOU DIED", 380, 200);
-
-            g.setFont(new Font("Arial", Font.PLAIN, 14));
-            g.drawString(
-                "ESC - Level Select   |   R - Restart Level",
-                300, 500
-            );
-        }
+        renderUI(g);
 
     }
 
