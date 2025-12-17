@@ -20,7 +20,7 @@ public class Player {
 
     private final float GRAVITY = 2500f;
     private final int JUMP_STRENGTH = -900;
-    private final float MAX_FALL_SPEED = 600f;
+    private final float MAX_FALL_SPEED = 1000f;
 
     private BufferedImage spriteSheet;
     private BufferedImage[] walkFrames;
@@ -35,6 +35,9 @@ public class Player {
     private final int SPRITE_WIDTH = 32;
     private final int SPRITE_HEIGHT = 32;
     private final int SCALE = 3;
+    
+    private float airTime = 0f;        // how long player has been in the air
+    private boolean wasGrounded = false;
 
     private boolean controlsEnabled = true;
     
@@ -43,6 +46,7 @@ public class Player {
     private boolean rightPressed = false;
     
     private Sound jumpSound;  // Add inside Player
+    private Sound landSound;
     
     // Track if the player is facing left or right
     private boolean facingLeft = false;
@@ -84,6 +88,7 @@ public class Player {
         
         // Load the jump sound
         jumpSound = new Sound("/resources/sounds/jump.wav");
+        landSound = new Sound("/resources/sounds/ground-impact-3520532.wav");
     }
 
     // input handling
@@ -155,7 +160,7 @@ public class Player {
     public int update(double dt, List<Coin> coins, List<Tile> map, Sound coinSound) {
         // Horizontal movement
         x += veloX * dt;
-
+        
         if (map != null) {
             for (Tile t : map) {
                 if (t.isSolid() && getBounds().intersects(t.getBounds())) {
@@ -169,7 +174,9 @@ public class Player {
         // Update facing direction
         if (veloX > 0) facingLeft = false; // facing right
         else if (veloX < 0) facingLeft = true; // facing left
-
+        
+        wasGrounded = isGrounded;
+        
         // Vertical movement
         veloY += GRAVITY * dt;
         if (veloY > MAX_FALL_SPEED) veloY = MAX_FALL_SPEED;
@@ -187,6 +194,13 @@ public class Player {
                         isGrounded = true;  // Player is now grounded
                         isJumping = false;
                         coyoteTimeTimer = 0;  // Reset coyote time when landing
+                        
+                        // 🔊 landing sound (only if long fall)
+                        if (!wasGrounded && airTime >= 1.0f && landSound != null) {
+                            landSound.play();
+                        }
+                        
+                        airTime = 0;
                     } else if (veloY < 0) { // jumping
                         y = t.getBounds().y - 13 * SCALE + t.getBounds().height; // hitbox top
                         veloY = 0;
@@ -240,6 +254,11 @@ public class Player {
                 }
             }
         }
+        
+        if (!isGrounded) {
+            airTime += dt;
+        }
+        
         return collectedThisFrame;
     }
 

@@ -15,6 +15,7 @@ import com.mygame.Coin;
 import com.mygame.GameStateManager;
 import com.mygame.Platform;
 import com.mygame.Player;
+import com.mygame.Sound;
 import com.mygame.Spike;
 import com.mygame.TileLoader;
 
@@ -28,8 +29,10 @@ public class Level4State extends BaseLevelState {
     private List<Spike> spikes;
     private List<BreakablePlatform> breakablePlatforms;
 
-    private int goalX = 14;
-    private int goalY = -12;
+    private int goalX = 15;
+    private int goalY = 2;
+    
+    private boolean landed = false;
 
     public Level4State(GameStateManager gsm) {
         this.gsm = gsm;
@@ -49,16 +52,16 @@ public class Level4State extends BaseLevelState {
         }
 
         spikes = new ArrayList<>();
-        // Spike paths (fair but deadly)
-//        spikes.add(new Spike(2, 6, 16, 16, spikeSprite));
+        spikes.add(new Spike(-6, 19, 16, 16, spikeSprite));
+        spikes.add(new Spike(6, 25, 16, 16, spikeSprite));
 
         // --- PLATFORMS ---
         platforms = new ArrayList<>();
         BufferedImage platformSheet, plat16, plat32;
         try {
             platformSheet = ImageIO.read(getClass().getResource("/resources/sprites/platforms.png"));
-            plat16 = platformSheet.getSubimage(0, 48, 16, 16);
-            plat32 = platformSheet.getSubimage(16, 48, 32, 16);
+            plat16 = platformSheet.getSubimage(0, 16, 16, 16);
+            plat32 = platformSheet.getSubimage(16, 16, 32, 16);
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -70,19 +73,37 @@ public class Level4State extends BaseLevelState {
 
         // Example: a platform at (6, 3) in tiles
         breakablePlatforms.add(new BreakablePlatform(1, 8, 32, 16, breakableSprite32,0.5f));
-        breakablePlatforms.add(new BreakablePlatform(16, 19, 16, 16, breakableSprite16,0.5f));
+        breakablePlatforms.add(new BreakablePlatform(14, 7, 16, 16, breakableSprite16,0.5f));
+        breakablePlatforms.add(new BreakablePlatform(10, 10, 16, 16, breakableSprite16,0.5f));
+        breakablePlatforms.add(new BreakablePlatform(14, 13, 16, 16, breakableSprite16,0.5f));
+        breakablePlatforms.add(new BreakablePlatform(10, 4, 16, 16, breakableSprite16,0.5f));
+        
 
-
+        
         
 
 //        // Static safe platforms
-        platforms.add(new Platform(10, 20, 13, 20, 32, 16, plat32, 100f)); // Start
+        platforms.add(new Platform(10, 15,10, 20, 32, 16, plat32, 100f)); // Start
+        platforms.add(new Platform(12,25,12, 20, 32, 16, plat32, 100f));
+        platforms.add(new Platform(-3, 17, -3,17 , 32, 16, plat32, 0));
+        platforms.add(new Platform(-7, 20, -3,17 , 32, 16, plat32, 0));
         
-        platforms.add(new Platform(19, 17, 19,23, 32, 16, plat32, 100f));
+        platforms.add(new Platform(-5, 29, 4,28, 16, 16, plat16, 0));
+        
+        platforms.add(new Platform(10, 25, 4,28, 16, 16, plat16, 0));
+        
+        platforms.add(new Platform(-4,26,-4, 22, 16, 16, plat16, 100f));
+        platforms.add(new Platform(15,26,15, 26, 16, 16, plat16, 0));
+        
 
         // --- COINS ---
         List<int[]> coinPositions = new ArrayList<>();
-        coinPositions.add(new int[]{2 * TILE, 5 * TILE});
+        coinPositions.add(new int[]{0 * TILE, 14 * TILE});
+        coinPositions.add(new int[]{-7 * TILE, 19 * TILE});
+        coinPositions.add(new int[]{10 * TILE, 23 * TILE});
+        coinPositions.add(new int[]{15 * TILE, 24 * TILE});
+        coinPositions.add(new int[]{-5 * TILE, 27 * TILE});
+        coinPositions.add(new int[]{6 * TILE, 24 * TILE});
         addCoins(coinPositions, "/resources/sprites/coin.png");
 
         // --- TILES ---
@@ -90,22 +111,49 @@ public class Level4State extends BaseLevelState {
         map = new ArrayList<>();
         if (tileset != null) {
             // Ground
-            for (int x = -5; x < 8; x++) addTile(x, 20, 6, 1, true);
+            for (int x = -1; x < 8; x++) addTile(x, 15, 2, 1, true);
+            
+            for(int x =0;x<9;x++) {
+            	for(int y=16;y<23;y++) {
+            		addTile(x,y,18,1,true);
+            	}
+            }
+            
+            for(int y= 0;y<16;y++) {addTile(8,y,18,1,true);}
+            for(int y= 0;y<32; y++) {addTile(-8, y,18,1,true);}            
+            for(int y=16;y<23;y++) {addTile(-1,y,18,1,true);}
+            for(int x=-1;x<5;x++) {addTile(x,23,18,1,true);}
+            for(int x=-7; x<16;x++) {addTile(x,31,2,1,true);}
+            for(int y=0; y<32;y++) {addTile(16,y,18,1,true);}
+            for(int x=14;x<16;x++) {
+            	for(int y=29;y<32;y++) {addTile(x,y,18,1,true);}
+            }
+            
+            for(int x=-7;x<16;x++) {
+            	addTile(x,0,18,1,true);
+            }
+            
+            for(int x=-2; x<7;x++) {addTile(x,27,2,1,true);}
+            addTile(6,26,2,1,true);
+            
+            addTile(15,3,2,1,true);
+            addTile(14,3,2,1,true);
+            addTile(13 ,3,2,1,true);
             
             //BG
-//            for(int x=-8;x<40;x++) {
-//            	for(int y=-10;y<10;y++) {
-//            		addTile(x,y,176,0,false);
-//            	}
-//            }
-//            
-//            for(int x=-8;x<40;x++) {addTile(x,10,192,0,false);}
-//            
-//            for(int x = -8; x<40;x++) {
-//            	for(int y=11;y<30;y++) {
-//            		addTile(x,y,208,0,false);
-//            	}
-//            }
+            for(int x=-8;x<17;x++) {
+            	for(int y=0;y<10;y++) {
+            		addTile(x,y,176,0,false);
+            	}
+            }
+            
+            for(int x=-8;x<17;x++) {addTile(x,10,192,0,false);}
+            
+            for(int x = -8; x<17;x++) {
+            	for(int y=11;y<32;y++) {
+            		addTile(x,y,208,0,false);
+            	}
+            }
         }
 
 
