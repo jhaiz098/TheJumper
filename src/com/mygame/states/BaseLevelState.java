@@ -57,7 +57,7 @@ public abstract class BaseLevelState implements GameState {
         if (music != null) {
             music.stop(); // reset
             music.loop();
-            System.out.println("Music started");
+//            System.out.println("Music started");
         } else {
             System.out.println("Music is null!");
         }
@@ -66,6 +66,8 @@ public abstract class BaseLevelState implements GameState {
 
     protected void stopMusic() {
         if (music != null) music.stop();
+        if (levelCompleteSound != null) levelCompleteSound.stop();
+        if (deathSound != null) deathSound.stop();
     }
 
     

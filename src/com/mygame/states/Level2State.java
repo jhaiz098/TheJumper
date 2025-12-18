@@ -1,19 +1,27 @@
 package com.mygame.states;
 
+import static com.mygame.GameConstants.TILE;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.mygame.ArrowTrap;
 import com.mygame.Coin;
+import com.mygame.Enemy;
 import com.mygame.GameStateManager;
 import com.mygame.Platform;
 import com.mygame.Player;
+import com.mygame.Saw;
 import com.mygame.Sound;
+import com.mygame.Spike;
 import com.mygame.TileLoader;
 
 public class Level2State extends BaseLevelState{
@@ -23,13 +31,155 @@ public class Level2State extends BaseLevelState{
     private BufferedImage[] tileset;
     
     private List<Platform> platforms;
-    
+    private List<Enemy> enemies;
+    private List<Spike> spikes;
+    private List<Saw> saws;
+    private List<ArrowTrap> arrowTraps;
+
     private int goalX=53;
     private int goalY=-3;
     
     public Level2State(GameStateManager gsm) {
     	this.gsm = gsm;
     	
+    	// =========================
+        // ENEMIES
+        // =========================
+        enemies = new ArrayList<>();
+
+        try {
+        	BufferedImage greenSlimeSheet = ImageIO.read(
+        		    getClass().getResource("/resources/sprites/slime_green.png")
+        		);
+        	
+        	BufferedImage purpleSlimeSheet = ImageIO.read(
+        		    getClass().getResource("/resources/sprites/slime_purple.png")
+        		);
+
+        		Enemy slime = new Enemy(
+        		    7* TILE, 9 * TILE,     // start
+        		    1 * TILE, 9 * TILE,     // end
+        		    16, 16,                 // sprite size
+        		    3,                      // scale
+        		    greenSlimeSheet,
+        		    4, 7,                   // idle frames
+        		    4, 7,                   // move frames
+        		    Enemy.PatrolType.HORIZONTAL,
+        		    100f,                    // speed
+        		    2.5f,                    // idle seconds
+        		    1 // sprite facing right
+        		);
+        		
+            enemies.add(slime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+     // =========================
+        // ARROW TRAP (SHOOTER)
+        // =========================
+           
+        arrowTraps = new ArrayList<>();
+           
+        // Declare sprites
+        BufferedImage trapSheet = null;
+        BufferedImage arrowSprite = null;
+
+        try {
+            // Load trap sprite sheet (idle + shooting animation)
+            trapSheet = ImageIO.read(
+                    getClass().getResource("/resources/sprites/Shooter_Arrow_Trap.png")
+            );
+
+            // Load arrow projectile sprite
+            arrowSprite = ImageIO.read(
+                    getClass().getResource("/resources/sprites/arrow.png")
+            );
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+   	  // =========================
+   	  // ADD ARROW TRAPS (EASY)
+   	  // =========================
+   	  arrowTraps.add(new ArrowTrap(
+   	          35 * 16 * 3,
+   	          10 * 16 * 3,
+   	          ArrowTrap.Direction.LEFT,
+   	          14f * 16 * 3,
+   	          600f,
+   	          1.5f,
+   	          trapSheet,
+   	          16, 16,
+   	          3,
+   	          5, 5,
+   	          0, 5,
+   	          arrowSprite
+   	  ));
+        
+        // =========================
+        // SAWS
+        // =========================
+        saws = new ArrayList<>();
+
+        try {
+            BufferedImage sawSheet = ImageIO.read(getClass().getResource("/resources/sprites/Suriken.png"));
+
+            // Example saw 1
+            List<Point> path1 = new ArrayList<>();
+            path1.add(new Point(-12 * TILE, 1 * TILE));
+            path1.add(new Point(-12 * TILE, 9 * TILE));
+            path1.add(new Point(6 * TILE, 9 * TILE));
+            path1.add(new Point(6 * TILE, 1 * TILE));
+
+            List<Float> speeds1 = new ArrayList<>();
+            speeds1.add(100f);
+            speeds1.add(1000f);
+            speeds1.add(400f);
+            speeds1.add(300f);
+
+            saws.add(new Saw(
+                path1,
+                speeds1,
+                sawSheet,
+                32, 32, // sprite size
+                3,      // scale
+                0, 0,   // idle frames
+                0, 7    // move frames
+            ));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    	
+        // =========================
+        // SPIKES
+        // =========================
+        BufferedImage spikeSprite;
+    	
+    	try {
+    	    BufferedImage spikeSheet = ImageIO.read(
+    	        getClass().getResource("/resources/sprites/spike.png")
+    	    );
+
+    	    spikeSprite = spikeSheet.getSubimage(0, 0, 16, 16);
+
+    	} catch (Exception e) {
+    	    e.printStackTrace();
+    	    spikeSprite = null;
+    	}
+
+    	spikes = new ArrayList<>();
+
+    	int SCALE = 3;
+
+    	spikes.add(new Spike(9,6,16,16,spikeSprite));
+    	spikes.add(new Spike(0,9,16,16,spikeSprite));
+        
+        // =========================
+        // PLATFORMS
+        // =========================
     	platforms = new ArrayList<>();
 
     	BufferedImage platformSheet;
@@ -56,8 +206,8 @@ public class Level2State extends BaseLevelState{
     	
     	platforms.add(
     		    new Platform(
-    		        43,-1, 
-    		        24,-1,
+    		        27,0, 
+    		        27,0,
     		        16,
     		        16,
     		        plat16,
@@ -67,23 +217,31 @@ public class Level2State extends BaseLevelState{
 
     		platforms.add(
     		    new Platform(
-    		        39,-1, 
-    		        39,-1,
-    		        32, 
+    		        27,-6, 
+    		        27,-6,
+    		        16, 
     		        16,
-    		        plat32,
+    		        plat16,
     		        0f
     		    )
     		);
 
-
-
-//    	music = new Sound("/resources/music/8-bit-game-158815.wav");
+    		platforms.add(
+        		    new Platform(
+        		        30,-3, 
+        		        30,-3,
+        		        16, 
+        		        16,
+        		        plat16,
+        		        0f
+        		    )
+        		);
     	
     	tileset = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
     	
     	List<int[]> coinPositions = new ArrayList<>();
-        coinPositions.add(new int[]{14 * 16 * 3, 4 * 16 * 3});
+        coinPositions.add(new int[]{1 * 16 * 3, 8 * 16 * 3});
+        coinPositions.add(new int[]{12 * 16 * 3, 3 * 16 * 3});
         coinPositions.add(new int[]{31 * 16 * 3, 4 * 16 * 3});
         coinPositions.add(new int[]{21 * 16 * 3, 10 * 16 * 3});
 
@@ -96,78 +254,112 @@ public class Level2State extends BaseLevelState{
         map = new java.util.ArrayList<>();
         if (tileset != null && tileset.length > 0) {
             // Ground at y=10
-            for (int i = 0; i <= 12; i++) {
+            for (int i = -9; i <= 12; i++) {
                 addTile(i, 10, 0, 1, true); // inherited method
+                addTile(i,11,16,1,true);
+                if(i>=-6) addTile(i,12,16,1,true);
+                if(i>=6) addTile(i,13,16,1,true);
             }
             
-            for(int i=7; i<11; i++) {
+            for(int i=6; i<11; i++) {
             	addTile(i,7,0,1,true);
             }
             
             for(int i=16;i<18;i++) {
             	addTile(i,9,0,1,true);
+            	for(int y=10;y<12;y++) {            		
+            		addTile(i,y,16,1,true);
+            	}
             }
             
-            for(int i=21;i<22;i++) {
-            	addTile(i,11,0,1,true);
-            }
-            
-            for(int i=27;i<31;i++) {
-            	addTile(i,11,0,1,true);
-            }
-            
-            for(int i=32;i<35;i++) {
-            	addTile(i,9,0,1,true);
-            }
-            
-            addTile(38,6, 0,1,true);
-            addTile(39,6, 0,1,true);
-            
-            addTile(35,3,0,1,true);
+            addTile(17,12,16,1,true);
 
-            addTile(32,1,0,1,true);
+            addTile(21,11,0,1,true);
+            addTile(21,12,16,1,true);
+            addTile(21,13,16,1,true);
             
-            addTile(31,5,0,1,true);
+            for(int i=27;i<33;i++) {
+            	addTile(i,11,0,1,true);
+            	addTile(i,12,16,1,true);
+            	if(i>27) addTile(i,13,16,1,true);
+            	if(i>28&&i<32) addTile(i,14,16,1,true);
+            	if(i>29&&i<32) addTile(i,15,16,1,true);
+            }
+            addTile(31,16,16,1,true);
             
-            addTile(37,1,0,1,true);
+            for(int i=35;i<39;i++) {
+            	addTile(i,9,0,1,true);
+            	if(i>=35 && i<=36) {
+            		addTile(i,12,16,1,true);
+            	}
+            	
+            	for(int y=10;y<=11;y++) {
+            		if(y==10 && i == 35) continue;
+            		else addTile(i,y,16,1,true);
+            	}
+            }
+            addTile(35,13,16,1,true);
+            addTile(38,12,16,1,true);
             
-            addTile(36,-1,0,1,true);
+            for(int x=41;x<=43;x++) {
+            	addTile(x,6, 0,1,true);
+            	for(int y=7;y<=10;y++) {
+            		if(y==7) addTile(x,y, 16,1,true);
+            		if(y>=8 && y<=9 && x > 41) addTile(x,y,16,1,true);
+            		if(y>9) addTile(43,y,16,1,true);
+            	}
+            }
             
-            for(int x=48; x<55;x++) {
-            	addTile(x,-2,0,1,true);
+            for(int i = 35; i<=36; i++) {
+            	addTile(i,4,0,1,true);
+            	addTile(i,5,16,1,true);
+            }
+            
+            for(int i=27;i<35;i++) {
+            	addTile(i,3,0,1,true);
+            	addTile(i,4,16,1,true);
+            }
+            
+            addTile(30,-8,0,1,true);
+            for(int x=31;x<=36;x++) {
+            	addTile(x,-9,0,1,true);
+        		addTile(x,-8,16,1,true);
+        		if(x>=33) addTile(x,-7,16,1,true);
+        		if(x>=34) addTile(x,-6,16,1,true);
+        		if(x>=36) addTile(x,-5,16,1,true);
             }
             
             //BG
-            for(int x=-15; x<50;x++) {
-            	for(int y=13;y<25;y++) {
-            		addTile(x,y,240,0,false);
-            	}
-            }
-            
-            for(int x=-15; x<50;x++) {
-            	addTile(x,12,224,0,false);
-            }
-            
-            for(int x=-15; x<50;x++) {
-            	for(int y=5;y<12;y++) {
-            		addTile(x,y,208,0,false);
-            	}
-            }
-            
-            for(int x=-15; x<50;x++) {
-            	addTile(x,4,192 ,0,false);
-            }
-            
-            for(int x=-15; x<50;x++) {
-            	for(int y=-5;y<4;y++) {
-            		addTile(x,y,176,0,false);
-            	}
-            }
+//            for(int x=-15; x<50;x++) {
+//            	for(int y=13;y<25;y++) {
+//            		addTile(x,y,240,0,false);
+//            	}
+//            }
+//            
+//            for(int x=-15; x<50;x++) {
+//            	addTile(x,12,224,0,false);
+//            }
+//            
+//            for(int x=-15; x<50;x++) {
+//            	for(int y=5;y<12;y++) {
+//            		addTile(x,y,208,0,false);
+//            	}
+//            }
+//            
+//            for(int x=-15; x<50;x++) {
+//            	addTile(x,4,192 ,0,false);
+//            }
+//            
+//            for(int x=-15; x<50;x++) {
+//            	for(int y=-5;y<4;y++) {
+//            		addTile(x,y,176,0,false);
+//            	}
+//            }
             
         }
 
         // Create player
-        player = new Player(3 * 16 *3, 6 * 16 *3, "/resources/sprites/knight.png");
+        player = new Player(-6 * 16 *3, 6 * 16 *3, "/resources/sprites/knight.png");
     }
     
     @Override
@@ -183,15 +375,54 @@ public class Level2State extends BaseLevelState{
         		p.update(dt);
         	    player.collideWithPlatform(p);
         	}
+        	
+        	for (Spike s : spikes) {
+        	    if (!playerDead && player.getBounds().intersects(s.getBounds())) {
+        	        onPlayerDeath();
+        	        break;
+        	    }
+        	}
+        	
+        	// =========================
+	         // UPDATE ARROW TRAPS
+	         // =========================
+	         for (ArrowTrap trap : arrowTraps) {
+	             trap.update(dt, player.getBounds());
+	
+	             // Arrow hits player
+	             if (!playerDead && trap.checkPlayerHit(player.getBounds())) {
+	                 onPlayerDeath();
+	                 break;
+	             }
+	         }
+        	
+        	// Saw logic
+        	for (Saw s : saws) {
+        	    s.update(dt);
 
+        	    // Collision with player
+        	    if (!playerDead && player.getBounds().intersects(s.getBounds())) {
+        	        onPlayerDeath();
+        	    }
+        	}
 
+        	// Update enemies
+            for (Enemy e : enemies) {
+                e.update(dt);
+
+                // Simple collision → death
+                if (player.getBounds().intersects(e.getBounds())) {
+                    onPlayerDeath();
+                }
+            }
+        	
+            for (Coin coin : coins) {
+                coin.update();
+            }
+            
             if (goal != null && player.getBounds().intersects(goal.getBounds())) {
                 finalizeLevel();
             }
-        }
-
-        for (Coin coin : coins) {
-            coin.update();
         }
 
         if (!playerDead && player.getY() > killY) {
@@ -217,7 +448,26 @@ public class Level2State extends BaseLevelState{
         if (goal != null) {
             goal.drawAt(g, camX, camY);
         }
-
+        
+        // Draw arrow traps
+        for (ArrowTrap trap : arrowTraps) {
+            trap.draw(g, camX, camY);
+        }
+        
+        // Spikes
+        for (Spike s : spikes) {
+            s.draw(g, camX, camY);
+        }
+        
+        // Enemies
+        for (Enemy e : enemies) {
+            e.draw(g, camX, camY);
+        }
+        
+        for (Saw s : saws) {
+            s.draw(g, camX, camY);
+        }
+        
         for (Platform p : platforms) {
             p.draw(g, camX, camY);
         }

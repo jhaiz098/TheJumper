@@ -265,31 +265,31 @@ public class Level3State extends BaseLevelState{
             	addTile(x,-14,4,1,true);
             }
           //BG
-          for(int x=-10; x<20;x++) {
-          	for(int y=5;y<15;y++) {
-          		addTile(x,y,176,0,false);
-          	}
-          }
+//          for(int x=-10; x<20;x++) {
+//          	for(int y=5;y<15;y++) {
+//          		addTile(x,y,176,0,false);
+//          	}
+//          }
+////          
+//          for(int x=-10; x<20;x++) {
+//          	addTile(x,4,160,0,false);
+//          }
+////          
+//          for(int x=-10; x<20;x++) {
+//          	for(int y=16;y<18;y++) {
+//          		addTile(x,y,208,0,false);
+//          	}
+//          }
+////          
+//          for(int x=-10; x<20;x++) {
+//          	addTile(x,15 ,192 ,0,false);
+//          }
 //          
-          for(int x=-10; x<20;x++) {
-          	addTile(x,4,160,0,false);
-          }
-//          
-          for(int x=-10; x<20;x++) {
-          	for(int y=16;y<18;y++) {
-          		addTile(x,y,208,0,false);
-          	}
-          }
-//          
-          for(int x=-10; x<20;x++) {
-          	addTile(x,15 ,192 ,0,false);
-          }
-          
-          for(int x=-40;x<50;x++) {
-        	  for(int y=-20;y<4;y++) {
-        		  addTile(x,y,144,0,false);
-        	  }
-          }
+//          for(int x=-40;x<50;x++) {
+//        	  for(int y=-20;y<4;y++) {
+//        		  addTile(x,y,144,0,false);
+//        	  }
+//          }
             
         }
         

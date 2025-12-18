@@ -95,19 +95,19 @@ public class Player {
     public void keyPressed(int key) {
     	if (!controlsEnabled) return;
     	
-        if (key == KeyEvent.VK_LEFT) leftPressed = true;
-        if (key == KeyEvent.VK_RIGHT) rightPressed = true;
-        if (key == KeyEvent.VK_SPACE && (isGrounded || coyoteTimeTimer > 0)) {
+        if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) leftPressed = true;
+        if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) rightPressed = true;
+        if ((key == KeyEvent.VK_SPACE || key == KeyEvent.VK_W) && (isGrounded || coyoteTimeTimer > 0)) {
         	jump();  // Jump if grounded or within coyote time
         }
         updateVelocity();
     }
 
     public void keyReleased(int key) {
-    	if (!controlsEnabled) return;
+    	if (!controlsEnabled) return; 
     	
-        if (key == KeyEvent.VK_LEFT) leftPressed = false;
-        if (key == KeyEvent.VK_RIGHT) rightPressed = false;
+        if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) leftPressed = false;
+        if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) rightPressed = false;
         updateVelocity();
     }
 
