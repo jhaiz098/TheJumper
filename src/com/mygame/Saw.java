@@ -11,7 +11,9 @@ public class Saw {
     // POSITION
     // =========================
     private float x, y;
-
+    
+    private boolean returningToStart = false;
+    
     // =========================
     // SIZE
     // =========================
@@ -19,6 +21,10 @@ public class Saw {
     private int scale;
     private int width, height;
 
+    private boolean loop = true;        // loops patrol by default
+    private boolean reactivate = false; // can re-trigger when using activation zone
+    private boolean finished = false;   // reached end of path if not looping
+    
     // =========================
     // ANIMATION
     // =========================
@@ -38,9 +44,39 @@ public class Saw {
     private int currentTarget = 0;
 
     // =========================
-    // CONSTRUCTOR
+    // TRIGGER
     // =========================
-    public Saw(
+    private Rectangle activationZone; // optional trigger area
+    private boolean active = true;    // default: normal saw
+
+    // =========================
+    // CONSTRUCTOR (normal saw)
+    // =========================
+    public Saw(List<Point> patrolPoints, List<Float> speeds, BufferedImage spriteSheet,
+               int spriteW, int spriteH, int scale, int idleStart, int idleEnd,
+               int moveStart, int moveEnd, boolean loop) {
+        initSaw(patrolPoints, speeds, spriteSheet, spriteW, spriteH, scale, idleStart, idleEnd, moveStart, moveEnd);
+        this.active = true;
+        this.loop = loop;
+    }
+
+    // =========================
+    // CONSTRUCTOR (triggered saw)
+    // =========================
+    public Saw(List<Point> patrolPoints, List<Float> speeds, BufferedImage spriteSheet,
+            int spriteW, int spriteH, int scale, int idleStart, int idleEnd,
+            int moveStart, int moveEnd, Rectangle activationZone, boolean loop, boolean reactivate) {
+     initSaw(patrolPoints, speeds, spriteSheet, spriteW, spriteH, scale, idleStart, idleEnd, moveStart, moveEnd);
+     this.activationZone = activationZone;
+     this.active = false;
+     this.loop = loop;
+     this.reactivate = reactivate;
+ }
+
+    // =========================
+    // COMMON INIT
+    // =========================
+    private void initSaw(
             List<Point> patrolPoints,
             List<Float> speeds,
             BufferedImage spriteSheet,
@@ -61,12 +97,10 @@ public class Saw {
         this.width = spriteW * scale;
         this.height = spriteH * scale;
 
-        // Start at first patrol point
         Point start = patrolPoints.get(0);
         this.x = start.x;
         this.y = start.y;
 
-        // Load animations
         idleFrames = extractFrames(spriteSheet, idleStart, idleEnd);
         moveFrames = extractFrames(spriteSheet, moveStart, moveEnd);
         currentFrame = idleFrames[0];
@@ -79,12 +113,10 @@ public class Saw {
         int columns = sheet.getWidth() / spriteW;
         int count = end - start + 1;
         BufferedImage[] frames = new BufferedImage[count];
-
         for (int i = 0; i < count; i++) {
             int frame = start + i;
             int col = frame % columns;
             int row = frame / columns;
-
             frames[i] = sheet.getSubimage(col * spriteW, row * spriteH, spriteW, spriteH);
         }
         return frames;
@@ -93,56 +125,91 @@ public class Saw {
     // =========================
     // UPDATE
     // =========================
-    public void update(double dt) {
+    public void update(double dt, Rectangle playerBounds) {
+
+        // Trigger check
+        if (!active && activationZone != null) {
+            if (playerBounds.intersects(activationZone)) {
+                active = true;
+                finished = false;
+                returningToStart = false;
+                currentTarget = 0;
+            } else {
+                animate(idleFrames, 1f);
+                return;
+            }
+        }
+
+        if (!active || finished) return;
+
         Point target = patrolPoints.get(currentTarget);
 
         float dx = target.x - x;
         float dy = target.y - y;
         float distance = (float) Math.sqrt(dx * dx + dy * dy);
-
         float speed = speeds.get(currentTarget);
-        float moveDist = speed * (float)dt;
+        float moveDist = speed * (float) dt;
 
         if (distance <= moveDist) {
-            // Snap to target
             x = target.x;
             y = target.y;
-            // Move to next patrol point
-            currentTarget = (currentTarget + 1) % patrolPoints.size();
+
+            // ===== NORMAL PATH =====
+            if (!returningToStart) {
+                if (currentTarget == patrolPoints.size() - 1) {
+                    if (loop) {
+                        currentTarget = 0;
+                    } else {
+                        // start returning to first point
+                        returningToStart = true;
+                        currentTarget = 0;
+                    }
+                } else {
+                    currentTarget++;
+                }
+            }
+            // ===== RETURNING TO START =====
+            else {
+                // reached first point → stop
+                finished = true;
+                active = false;
+                returningToStart = false;
+            }
+
         } else {
-            // Move toward target
             float dirX = dx / distance;
             float dirY = dy / distance;
             x += dirX * moveDist;
             y += dirY * moveDist;
         }
 
-        // Animate using current speed
         animate(moveFrames, speed / 50f);
     }
 
 
 
-	 // =========================
-	 // ANIMATE WITH SPEED
-	 // =========================
-	 private void animate(BufferedImage[] frames, float speed) {
-	     // speed = 1 → normal speed, higher → faster
-	     long adjustedDelay = (long)(FRAME_DELAY / speed);
-	
-	     if (System.currentTimeMillis() - lastFrameTime >= adjustedDelay) {
-	         lastFrameTime = System.currentTimeMillis();
-	         animIndex = (animIndex + 1) % frames.length;
-	         currentFrame = frames[animIndex];
-	     }
-	 }
-
+    // =========================
+    // ANIMATE WITH SPEED
+    // =========================
+    private void animate(BufferedImage[] frames, float speed) {
+        long adjustedDelay = (long) (FRAME_DELAY / speed);
+        if (System.currentTimeMillis() - lastFrameTime >= adjustedDelay) {
+            lastFrameTime = System.currentTimeMillis();
+            animIndex = (animIndex + 1) % frames.length;
+            currentFrame = frames[animIndex];
+        }
+    }
 
     // =========================
     // DRAW
     // =========================
     public void draw(Graphics g, int camX, int camY) {
         g.drawImage(currentFrame, (int)(x - camX), (int)(y - camY), width, height, null);
+        // Optional debug: show activation zone
+        if (!active && activationZone != null) {
+            g.setColor(new Color(255, 0, 0, 80));
+            g.fillRect(activationZone.x - camX, activationZone.y - camY, activationZone.width, activationZone.height);
+        }
     }
 
     // =========================
@@ -151,4 +218,15 @@ public class Saw {
     public Rectangle getBounds() {
         return new Rectangle((int)x, (int)y, width, height);
     }
+    
+    public void setActivationZone(Rectangle zone) {
+        this.activationZone = zone;
+    }
+
+    private Rectangle getActivationZone() {
+        if (activationZone != null) return activationZone;
+        // Default: saw is always active if zone not set
+        return new Rectangle((int)x, (int)y, width, height);
+    }
+
 }

@@ -344,6 +344,33 @@ public class Level1State extends BaseLevelState {
             for (int x = 34; x <= 39; x++) {
                 addTile(x, 3, 16, 1, true);
             }
+            
+          //BG
+          for(int x=-15; x<60;x++) {
+          	for(int y=13;y<25;y++) {
+          		addTile(x,y,240,0,false);
+          	}
+          }
+          
+          for(int x=-15; x<60;x++) {
+          	addTile(x,12,224,0,false);
+          }
+          
+          for(int x=-15; x<60;x++) {
+          	for(int y=5;y<12;y++) {
+          		addTile(x,y,208,0,false);
+          	}
+          }
+          
+          for(int x=-15; x<60;x++) {
+          	addTile(x,4,192 ,0,false);
+          }
+          
+          for(int x=-15; x<60;x++) {
+          	for(int y=-15;y<4;y++) {
+          		addTile(x,y,176,0,false);
+          	}
+          }
         }
 
         // =========================

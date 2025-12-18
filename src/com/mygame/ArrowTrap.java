@@ -54,6 +54,11 @@ public class ArrowTrap {
     private BufferedImage arrowSprite;
     private ArrayList<Arrow> arrows = new ArrayList<>();
 
+	 // =========================
+	 // SOUND
+	 // =========================
+	 private Sound fireSound;
+    
     // =========================
     // DEBUG
     // =========================
@@ -93,6 +98,8 @@ public class ArrowTrap {
         this.height = spriteH * scale;
 
         this.arrowSprite = arrowSprite;
+
+        fireSound = new Sound("/resources/sounds/crossbow-firing-95020 (online-video-cutter.com).wav");
 
         loadFrames(trapSheet, idleStart, idleEnd, shootStart, shootEnd);
         currentFrame = idleFrames[0];
@@ -191,15 +198,19 @@ public class ArrowTrap {
 
         arrows.add(new Arrow(
                 x + width / 2,
-                y + height / 2 - ((height/2) / 2),
-//                x,
-//                y,
+                y + height / 2 - ((height / 2) / 2),
                 vx,
                 vy,
                 arrowSprite,
                 scale
         ));
+
+        // 🔊 play fire sound
+        if (fireSound != null) {
+            fireSound.play();
+        }
     }
+
 
     // =========================
     // ANIMATION

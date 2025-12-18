@@ -18,6 +18,9 @@ public class Player {
     private float coyoteTime = 0.3f;  // Time window for coyote time (in seconds)
     private float coyoteTimeTimer = 0; // Timer to track time since last grounded
 
+    private boolean jumpHeld = false;
+    private final float JUMP_CUT_MULTIPLIER = 0.7f; // lower = shorter jump
+    
     private final float GRAVITY = 2500f;
     private final int JUMP_STRENGTH = -900;
     private final float MAX_FALL_SPEED = 1000f;
@@ -97,9 +100,13 @@ public class Player {
     	
         if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) leftPressed = true;
         if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) rightPressed = true;
-        if ((key == KeyEvent.VK_SPACE || key == KeyEvent.VK_W) && (isGrounded || coyoteTimeTimer > 0)) {
-        	jump();  // Jump if grounded or within coyote time
+        if (key == KeyEvent.VK_SPACE || key == KeyEvent.VK_W) {
+            jumpHeld = true;
+            if (isGrounded || coyoteTimeTimer > 0) {
+                jump();
+            }
         }
+
         updateVelocity();
     }
 
@@ -108,6 +115,15 @@ public class Player {
     	
         if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) leftPressed = false;
         if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) rightPressed = false;
+        if (key == KeyEvent.VK_SPACE || key == KeyEvent.VK_W) {
+            jumpHeld = false;
+
+            // Cut jump height if released early
+            if (veloY < 0) {
+                veloY *= JUMP_CUT_MULTIPLIER;
+            }
+        }
+
         updateVelocity();
     }
 
@@ -118,19 +134,21 @@ public class Player {
     }
 
     public void jump() {
-    	if (!controlsEnabled) return;
-    	
-        if (isGrounded || coyoteTimeTimer > 0) {  // Only jump if grounded or within coyote time
+        if (!controlsEnabled) return;
+
+        if (isGrounded || coyoteTimeTimer > 0) {
             veloY = JUMP_STRENGTH;
             isJumping = true;
-            isGrounded = false;  // Player is no longer on the ground
-            coyoteTimeTimer = 0;  // Reset coyote time when the player jumps
-            
+            isGrounded = false;
+            coyoteTimeTimer = 0;
+            jumpHeld = true;
+
             if (jumpSound != null) {
-                jumpSound.play();  // play jump sound
+                jumpSound.play();
             }
         }
     }
+
     
     public void collideWithPlatform(Platform p) {
         Rectangle pb = getBounds();
