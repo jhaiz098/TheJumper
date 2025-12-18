@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-public class Level3State extends BaseLevelState {
+public class Level1State2OLD extends BaseLevelState {
 
     // === CORE ===
     private final GameStateManager gsm;
@@ -27,10 +27,10 @@ public class Level3State extends BaseLevelState {
     private int goalX = 32;
     private int goalY = -2;
 
-    public Level3State(GameStateManager gsm) {
+    public Level1State2OLD(GameStateManager gsm) {
         this.gsm = gsm;
 
-        levelNumber = 3;
+        levelNumber = 1;
         
         // Kill player if they fall too far
         killY = 1500;
@@ -348,31 +348,31 @@ public class Level3State extends BaseLevelState {
             }
             
           //BG
-//          for(int x=-15; x<60;x++) {
-//          	for(int y=13;y<25;y++) {
-//          		addTile(x,y,240,0,false);
-//          	}
-//          }
-//          
-//          for(int x=-15; x<60;x++) {
-//          	addTile(x,12,224,0,false);
-//          }
-//          
-//          for(int x=-15; x<60;x++) {
-//          	for(int y=5;y<12;y++) {
-//          		addTile(x,y,208,0,false);
-//          	}
-//          }
-//          
-//          for(int x=-15; x<60;x++) {
-//          	addTile(x,4,192 ,0,false);
-//          }
-//          
-//          for(int x=-15; x<60;x++) {
-//          	for(int y=-15;y<4;y++) {
-//          		addTile(x,y,176,0,false);
-//          	}
-//          }
+          for(int x=-15; x<60;x++) {
+          	for(int y=13;y<25;y++) {
+          		addTile(x,y,240,0,false);
+          	}
+          }
+          
+          for(int x=-15; x<60;x++) {
+          	addTile(x,12,224,0,false);
+          }
+          
+          for(int x=-15; x<60;x++) {
+          	for(int y=5;y<12;y++) {
+          		addTile(x,y,208,0,false);
+          	}
+          }
+          
+          for(int x=-15; x<60;x++) {
+          	addTile(x,4,192 ,0,false);
+          }
+          
+          for(int x=-15; x<60;x++) {
+          	for(int y=-15;y<4;y++) {
+          		addTile(x,y,176,0,false);
+          	}
+          }
         }
 
         // =========================
@@ -619,13 +619,13 @@ public class Level3State extends BaseLevelState {
     @Override
     protected void restartLevel() {
         stopMusic();
-        gsm.setState(GameStateManager.LEVEL_3);
+        gsm.setState(GameStateManager.LEVEL_1);
     }
 
     @Override
     protected void nextLevel() {
         stopMusic();
-        gsm.setState(GameStateManager.LEVEL_4);
+        gsm.setState(GameStateManager.LEVEL_2);
     }
 
     @Override

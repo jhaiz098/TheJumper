@@ -16,6 +16,13 @@ public abstract class BaseLevelState implements GameState {
     
     protected Goal goal;
 
+    public int levelNumber = 0;
+ 
+    // High score for the level
+    protected double highScoreTime = Double.MAX_VALUE;
+    protected int highScoreStars = 0;
+    protected boolean newHighScore = false;
+    
     protected int maxCoins = 0;
     protected int collectedCoins = 0;
 
@@ -76,27 +83,76 @@ public abstract class BaseLevelState implements GameState {
     }
 
     protected void finalizeLevel() {
+        // ⭐ STAR CALCULATION
         if (maxCoins == 0) {
             starsEarned = 3;
-            levelFinished = true;
-            showFinishUI = true; // ← ADD
-            timerRunning = false;
-            return;
+        } else {
+            collectedCoins = maxCoins - coins.size();
+            float ratio = (float) collectedCoins / (float) maxCoins;
+
+            if (ratio >= 1.0f) starsEarned = 3;
+            else if (ratio >= 0.66f) starsEarned = 2;
+            else if (ratio >= 0.33f) starsEarned = 1;
+            else starsEarned = 0;
         }
 
-        collectedCoins = maxCoins - coins.size();
-        float ratio = (float) collectedCoins / (float) maxCoins;
-
-        if (ratio >= 1.0f) starsEarned = 3;
-        else if (ratio >= 0.66f) starsEarned = 2;
-        else if (ratio >= 0.33f) starsEarned = 1;
-        else starsEarned = 0;
-
         levelFinished = true;
-        showFinishUI = true; // ← ADD
-        
+        showFinishUI = true;
+        timerRunning = false;
+
         if (levelCompleteSound != null) levelCompleteSound.play();
+
+        // ===== HIGH SCORE LOGIC =====
+        loadHighScore();
+
+        boolean isBetter = false;
+        if (starsEarned > highScoreStars) isBetter = true;
+        else if (starsEarned == highScoreStars && levelTime < highScoreTime) isBetter = true;
+
+        newHighScore = isBetter; // set the congratulatory flag
+
+        if (isBetter) {
+            // Save automatically with default name
+            highScoreStars = starsEarned;
+            highScoreTime = levelTime;
+            saveHighScore();
+        }
     }
+    
+    private void loadHighScore() {
+        java.io.File file = new java.io.File("scores", "level" + levelNumber + "_score.txt");
+        if (!file.exists()) return;
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(file))) {
+            highScoreTime = Double.parseDouble(br.readLine());
+            highScoreStars = Integer.parseInt(br.readLine());
+        } catch (Exception e) {
+            highScoreTime = Double.MAX_VALUE;
+            highScoreStars = 0;
+        }
+    }
+
+
+
+    private void saveHighScore() {
+        try {
+            java.io.File dir = new java.io.File("scores");
+            if (!dir.exists()) dir.mkdirs();
+
+            java.io.File file = new java.io.File(dir, "level" + levelNumber + "_score.txt");
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(file)) {
+                pw.println(highScoreTime);
+                pw.println(highScoreStars);
+            }
+            
+            System.out.println("Saving score to: " + file.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
     
     protected void onPlayerDeath() {
         playerDead = true;
@@ -209,6 +265,7 @@ public abstract class BaseLevelState implements GameState {
         }
     }
 
+
     @Override
     public void keyReleased(int key) {}
     
@@ -256,6 +313,28 @@ public abstract class BaseLevelState implements GameState {
                 g.setFont(new Font("Arial", Font.PLAIN, 20));
                 g.drawString(String.format("Time: %.2f seconds", levelTime), 340, 240);
             }
+            
+            if (levelFinished && !playerDead) {
+                g.setFont(new Font("Arial", Font.PLAIN, 18));
+                g.drawString("BEST RECORD", 360, 300);
+                g.drawString("Stars: " + Math.max(highScoreStars, starsEarned), 360, 330);
+                g.drawString(String.format("Time: %.2f", Math.min(highScoreTime, levelTime)), 360, 360);
+            }
+
+        }
+        
+        if (showFinishUI && levelFinished && !playerDead) {
+            if (newHighScore) {
+                g.setFont(new Font("Arial", Font.BOLD, 24));
+                g.setColor(Color.YELLOW);
+                g.drawString("🎉 NEW HIGH SCORE! 🎉", 300, 270);
+            }
+
+            g.setFont(new Font("Arial", Font.PLAIN, 18));
+            g.setColor(Color.WHITE);
+            g.drawString("BEST:", 360, 300);
+            g.drawString("Stars: " + highScoreStars, 360, 330);
+            g.drawString(String.format("Time: %.2f", highScoreTime), 360, 360);
         }
         
         // 🎮 Controls hint
@@ -264,6 +343,7 @@ public abstract class BaseLevelState implements GameState {
             g.setColor(Color.WHITE);
 
             if (levelFinished) {
+            	
                 g.drawString(
                     "ESC - Level Select   |   R - Restart Level   |   N - Next Level",
                     300, 500

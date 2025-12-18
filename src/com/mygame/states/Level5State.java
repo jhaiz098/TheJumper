@@ -32,6 +32,7 @@ public class Level5State extends BaseLevelState {
     public Level5State(GameStateManager gsm) {
         this.gsm = gsm;
         
+        levelNumber = 5;
         setGoal(goalX * TILE, goalY * TILE, "/resources/sprites/goal.png");
         // --- COINS ---
         List<int[]> coinPositions = new ArrayList<>();
