@@ -62,7 +62,7 @@ public class ArrowTrap {
     // =========================
     // DEBUG
     // =========================
-    private boolean debug = true;
+    private boolean debug = false;
 
     // =========================
     // CONSTRUCTOR
