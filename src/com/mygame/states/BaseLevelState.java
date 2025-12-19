@@ -82,7 +82,10 @@ public abstract class BaseLevelState implements GameState {
     }
 
     protected void stopMusic() {
-        if (music != null) music.stop();
+    	if (music != null) {
+	        music.stop();
+	        music = null;
+	    }
         if (levelCompleteSound != null) levelCompleteSound.stop();
         if (deathSound != null) deathSound.stop();
     }

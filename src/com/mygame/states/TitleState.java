@@ -93,8 +93,11 @@ public class TitleState implements GameState {
     }
 
     private void stopMusic() {
-        if (music != null) music.stop();
-    }
+	    if (music != null) {
+	        music.stop();
+	        music = null;
+	    }
+	}
     
     @Override public void update(double dt) {}
 

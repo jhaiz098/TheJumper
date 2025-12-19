@@ -4,17 +4,21 @@ import static com.mygame.GameConstants.TILE;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.mygame.ArrowTrap;
 import com.mygame.BreakablePlatform;
 import com.mygame.Coin;
 import com.mygame.GameStateManager;
 import com.mygame.Platform;
 import com.mygame.Player;
+import com.mygame.Saw;
 import com.mygame.Sound;
 import com.mygame.Spike;
 import com.mygame.TileLoader;
@@ -24,8 +28,8 @@ public class Level5State extends BaseLevelState {
     private final GameStateManager gsm;
     private Player player;
     private BufferedImage[] tileset;
-
-
+    private List<ArrowTrap> arrowTraps;
+    
     private int goalX = 49;
     private int goalY = -1;
 
@@ -34,6 +38,7 @@ public class Level5State extends BaseLevelState {
         
         levelNumber = 5;
         setGoal(goalX * TILE, goalY * TILE, "/resources/sprites/goal.png");
+        
         // --- COINS ---
         List<int[]> coinPositions = new ArrayList<>();
         
@@ -137,7 +142,7 @@ public class Level5State extends BaseLevelState {
         renderTiles(g, camX, camY);
 
         for (Coin coin : coins) coin.drawAt(g, camX, camY);
-
+        
         if (goal != null) goal.drawAt(g, camX, camY);
 
         player.drawAt(g, camX, camY);
