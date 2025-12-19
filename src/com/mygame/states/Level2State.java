@@ -137,11 +137,13 @@ public class Level2State extends BaseLevelState{
             path3.add(new Point(26 * TILE, -10 * TILE));
             path3.add(new Point(26 * TILE, 7 * TILE));
             path3.add(new Point(32 * TILE, 7 * TILE));
+            path3.add(new Point(32 * TILE, -10 * TILE));
 
             List<Float> speeds3 = new ArrayList<>();
-            speeds3.add(200f);
-            speeds3.add(600f);
-            speeds3.add(200f);
+            speeds3.add(700f);
+            speeds3.add(700f);
+            speeds3.add(400f);
+            speeds3.add(700f);
 
             saws.add(new Saw(
                 path3,
@@ -332,39 +334,43 @@ public class Level2State extends BaseLevelState{
             addTile(33,9,0,1,true);
             
             for(int i=43;i<=45;i++) {
-            	addTile(i,8,0,16,true);
+            	addTile(i,8,0,1,true);
             }
             
             for(int i=49;i<=54;i++) {
-            	addTile(i,10,0,16,true);
+            	addTile(i,10,0,1,true);
             }
             
+            addTile(60,9,0,1,true);
+            
           //BG
-            for(int x=-15; x<60;x++) {
+            for(int x=-15; x<65;x++) {
               	for(int y=13;y<25;y++) {
               		addTile(x,y,240,0,false);
               	}
               }
               
-              for(int x=-15; x<60;x++) {
+              for(int x=-15; x<65;x++) {
               	addTile(x,12,224,0,false);
               }
               
-              for(int x=-15; x<60;x++) {
+              for(int x=-15; x<65;x++) {
               	for(int y=5;y<12;y++) {
               		addTile(x,y,208,0,false);
               	}
               }
               
-              for(int x=-15; x<60;x++) {
+              for(int x=-15; x<65;x++) {
               	addTile(x,4,192 ,0,false);
               }
               
-              for(int x=-15; x<60;x++) {
+              for(int x=-15; x<65;x++) {
               	for(int y=-5;y<4;y++) {
               		addTile(x,y,176,0,false);
               	}
               }
+              
+              finalizeMap();
             
         }
         

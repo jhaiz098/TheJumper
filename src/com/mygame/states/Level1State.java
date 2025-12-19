@@ -355,6 +355,8 @@ public class Level1State extends BaseLevelState{
           		addTile(x,y,176,0,false);
           	}
           }
+          
+          finalizeMap();
             
         }
         

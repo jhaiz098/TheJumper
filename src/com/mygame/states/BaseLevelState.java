@@ -12,6 +12,8 @@ public abstract class BaseLevelState implements GameState {
     protected List<Tile> map;
     protected List<Coin> coins;  // List of coins in the level
 
+    private static BufferedImage[] WORLD_TILESET;
+
     protected boolean showFinishUI = false;
     
     protected Goal goal;
@@ -70,6 +72,14 @@ public abstract class BaseLevelState implements GameState {
         }
     }
 
+    private static BufferedImage[] getWorldTileset() {
+        if (WORLD_TILESET == null) {
+            WORLD_TILESET = TileLoader.loadTiles(
+                "/resources/sprites/world_tileset.png", 16, 16
+            );
+        }
+        return WORLD_TILESET;
+    }
 
     protected void stopMusic() {
         if (music != null) music.stop();
@@ -82,6 +92,11 @@ public abstract class BaseLevelState implements GameState {
         goal = new Goal(x, y, spritePath);
     }
 
+    protected void finalizeMap() {
+        map.sort((a, b) -> Integer.compare(a.getZ(), b.getZ()));
+        needsRedraw = true;
+    }
+    
     protected void finalizeLevel() {
         // ⭐ STAR CALCULATION
         if (maxCoins == 0) {
@@ -169,12 +184,13 @@ public abstract class BaseLevelState implements GameState {
     
     // Add a tile to the map (same as before)
     protected void addTile(int tx, int ty, int tileIndex, int zIndex, boolean solid) {
-        BufferedImage[] tileset = TileLoader.loadTiles("/resources/sprites/world_tileset.png", 16, 16);
-        if (tileset != null && tileset.length > tileIndex) {
+        BufferedImage[] tileset = getWorldTileset();
+        if (tileset != null && tileIndex < tileset.length) {
             map.add(new Tile(tx, ty, tileset[tileIndex], zIndex, solid));
-            needsRedraw = true; // map changed → redraw next frame
+            needsRedraw = true;
         }
     }
+
 
     // Method to add a coin at a specific position
     protected void addCoin(int x, int y, String spriteSheetPath) {
@@ -194,8 +210,6 @@ public abstract class BaseLevelState implements GameState {
     private void rebuildMapImage() {
         if (map.isEmpty()) return;
 
-        map.sort((a, b) -> Integer.compare(a.getZ(), b.getZ()));
-
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
 
@@ -214,15 +228,22 @@ public abstract class BaseLevelState implements GameState {
         cachedMap = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = cachedMap.createGraphics();
 
-        for (Tile t : map) {
-            if (t.sprite == null) continue;
-            g2.drawImage(t.sprite,
-                t.getScreenX() - minX,
-                t.getScreenY() - minY,
-                Tile.PIXEL, Tile.PIXEL,
-                null
-            );
-        }
+        g2.setRenderingHint(
+        	    RenderingHints.KEY_ANTIALIASING,
+        	    RenderingHints.VALUE_ANTIALIAS_OFF
+        	);
+
+        	for (Tile t : map) {
+        	    if (t.sprite == null) continue;
+        	    g2.drawImage(
+        	        t.sprite,
+        	        t.getScreenX() - minX,
+        	        t.getScreenY() - minY,
+        	        Tile.PIXEL,
+        	        Tile.PIXEL,
+        	        null
+        	    );
+        	}
 
         g2.dispose();
 
