@@ -144,7 +144,7 @@ public abstract class BaseLevelState implements GameState {
                 pw.println(highScoreStars);
             }
             
-            System.out.println("Saving score to: " + file.getAbsolutePath());
+//            System.out.println("Saving score to: " + file.getAbsolutePath());
         } catch (Exception e) {
             e.printStackTrace();
         }

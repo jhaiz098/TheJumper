@@ -294,22 +294,38 @@ public class Level1State extends BaseLevelState{
         	addTile(-2,10,0,1,true);
         	addTile(-1,10,0,1,true);
         	
+        	for(int y=11; y<=12;y++) {
+        		addTile(-1,y,16,1,true);
+        		addTile(-2,y,16,1,true);
+        	}
+        	addTile(-2,13,16,1,true);
+        	
             // Ground at y=10
             for (int i = 1; i <= 10; i++) {
                 addTile(i, 10, 0, 1, true); // inherited method
+                addTile(i,11,16,1,true);
+                addTile(i,12,16,1,true);
+                if(i>3)addTile(i,13,16,1,true);
             }
             
             for (int i = 17; i <= 24; i++) {
                 addTile(i, 10, 0, 1, true); // inherited method
+                addTile(i,11,16,1,true);
+                if(i>=17 && i<=22) addTile(i,12,16,1,true);
             }
             
             for (int i = 28; i <= 33; i++) {
                 addTile(i, 10, 0, 1, true); // inherited method
+                addTile(i,11,16,1,true);
+                if(i>=30) addTile(i,12,16,1,true);
             }
             
             for (int i = 38; i <= 41; i++) {
                 addTile(i, 10, 0, 1, true); // inherited method
+                addTile(i,11,16,1,true);
+                addTile(i,12,16,1,true);
             }
+            addTile(41,13,16,1,true);
             
             addTile(46,9,0,1,true);
             

@@ -35,7 +35,7 @@ public class Level2State extends BaseLevelState{
     private List<Spike> spikes;
     private List<ArrowTrap> arrowTraps;
     
-    private int goalX=41;
+    private int goalX=53;
     private int goalY=9;
     
     public Level2State(GameStateManager gsm) {
@@ -72,20 +72,20 @@ public class Level2State extends BaseLevelState{
    	  // =========================
    	  // ADD ARROW TRAPS (EASY)
    	  // =========================
-//   	  arrowTraps.add(new ArrowTrap(
-//   	          45 * 16 * 3,
-//   	          9 * 16 * 3,
-//   	          ArrowTrap.Direction.LEFT,
-//   	          30f * 16 * 3,
-//   	          600f,
-//   	          1.5f,
-//   	          trapSheet,
-//   	          16, 16,
-//   	          3,
-//   	          5, 5,
-//   	          0, 5,
-//   	          arrowSprite
-//   	  ));
+   	  arrowTraps.add(new ArrowTrap(
+   	          59 * 16 * 3,
+   	          9 * 16 * 3,
+   	          ArrowTrap.Direction.LEFT,
+   	          30f * 16 * 3,
+   	          600f,
+   	          1.5f,
+   	          trapSheet,
+   	          16, 16,
+   	          3,
+   	          5, 5,
+   	          0, 5,
+   	          arrowSprite
+   	  ));
     	
     	// =========================
         // SAWS
@@ -95,47 +95,66 @@ public class Level2State extends BaseLevelState{
         try {
             BufferedImage sawSheet = ImageIO.read(getClass().getResource("/resources/sprites/Suriken.png"));
 
-//            List<Point> path1 = new ArrayList<>();
-//            path1.add(new Point(3 * TILE, 4 * TILE));
-//            path1.add(new Point(3 * TILE, 9 * TILE));
-//
-//            List<Float> speeds1 = new ArrayList<>();
-//            speeds1.add(200f);
-//            speeds1.add(200f);
-//
-//            saws.add(new Saw(
-//                path1,
-//                speeds1,
-//                sawSheet,
-//                32, 32, // sprite size
-//                3,      // scale
-//                0, 0,   // idle frames
-//                0, 7,    // move frames
-//                true
-//            ));
+            List<Point> path1 = new ArrayList<>();
+            path1.add(new Point(3 * TILE, 3 * TILE));
+            path1.add(new Point(3 * TILE, 9 * TILE));
+
+            List<Float> speeds1 = new ArrayList<>();
+            speeds1.add(200f);
+            speeds1.add(200f);
+
+            saws.add(new Saw(
+                path1,
+                speeds1,
+                sawSheet,
+                32, 32, // sprite size
+                3,      // scale
+                0, 0,   // idle frames
+                0, 7,    // move frames
+                true
+            ));
             
-//            List<Point> path3 = new ArrayList<>();
-//            path3.add(new Point(42 * TILE, -20 * TILE));
-//            path3.add(new Point(42 * TILE, -2 * TILE));
-//            path3.add(new Point(51 * TILE, -2 * TILE));
-//
-//            List<Float> speeds3 = new ArrayList<>();
-//            speeds3.add(500f);
-//            speeds3.add(700f);
-//            speeds3.add(200f);
-//
-//            saws.add(new Saw(
-//                path3,
-//                speeds3,
-//                sawSheet,
-//                32, 32, // sprite size
-//                3,      // scale
-//                0, 0,   // idle frames
-//                0, 7,    // move frames
-//                new Rectangle(41*16*3,-3*16*3,6*16*3,2*16*3),
-//                false,
-//                true
-//            ));
+            List<Point> path2 = new ArrayList<>();
+            path2.add(new Point(16 * TILE, 1 * TILE));
+            path2.add(new Point(16 * TILE, 6 * TILE));
+
+            List<Float> speeds2 = new ArrayList<>();
+            speeds2.add(200f);
+            speeds2.add(200f);
+
+            saws.add(new Saw(
+                path2,
+                speeds2,
+                sawSheet,
+                32, 32, // sprite size
+                3,      // scale
+                0, 0,   // idle frames
+                0, 7,    // move frames
+                true
+            ));
+            
+            List<Point> path3 = new ArrayList<>();
+            path3.add(new Point(26 * TILE, -10 * TILE));
+            path3.add(new Point(26 * TILE, 7 * TILE));
+            path3.add(new Point(32 * TILE, 7 * TILE));
+
+            List<Float> speeds3 = new ArrayList<>();
+            speeds3.add(200f);
+            speeds3.add(600f);
+            speeds3.add(200f);
+
+            saws.add(new Saw(
+                path3,
+                speeds3,
+                sawSheet,
+                32, 32, // sprite size
+                3,      // scale
+                0, 0,   // idle frames
+                0, 7,    // move frames
+                new Rectangle(27*16*3,5*16*3,6*16*3,3*16*3),
+                false,
+                true
+            ));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,36 +171,51 @@ public class Level2State extends BaseLevelState{
         		    getClass().getResource("/resources/sprites/slime_purple.png")
         		);
 
-//        		Enemy slime = new Enemy(
-//        		    17* TILE, 9 * TILE,     // start
-//        		    24 * TILE, 9 * TILE,     // end
-//        		    16, 16,                 // sprite size
-//        		    3,                      // scale
-//        		    greenSlimeSheet,
-//        		    4, 7,                   // idle frames
-//        		    4, 7,                   // move frames
-//        		    Enemy.PatrolType.HORIZONTAL,
-//        		    100f,                    // speed
-//        		    2.5f,                    // idle seconds
-//        		    1 // sprite facing right
-//        		);
+        		Enemy slime = new Enemy(
+        		    10* TILE, 9 * TILE,     // start
+        		    1 * TILE, 9 * TILE,     // end
+        		    16, 16,                 // sprite size
+        		    3,                      // scale
+        		    greenSlimeSheet,
+        		    4, 7,                   // idle frames
+        		    4, 7,                   // move frames
+        		    Enemy.PatrolType.HORIZONTAL,
+        		    100f,                    // speed
+        		    2.5f,                    // idle seconds
+        		    1 // sprite facing right
+        		);
 //        		
-//        		Enemy slime2 = new Enemy(
-//            		    28* TILE, 9 * TILE,     // start
-//            		    33 * TILE, 9 * TILE,     // end
-//            		    16, 16,                 // sprite size
-//            		    3,                      // scale
-//            		    greenSlimeSheet,
-//            		    4, 7,                   // idle frames
-//            		    4, 7,                   // move frames
-//            		    Enemy.PatrolType.HORIZONTAL,
-//            		    100f,                    // speed
-//            		    2.5f,                    // idle seconds
-//            		    1 // sprite facing right
-//            		);
+        		Enemy slime2 = new Enemy(
+            		    26* TILE, 7 * TILE,     // start
+            		    32 * TILE, 7 * TILE,     // end
+            		    16, 16,                 // sprite size
+            		    3,                      // scale
+            		    greenSlimeSheet,
+            		    4, 7,                   // idle frames
+            		    4, 7,                   // move frames
+            		    Enemy.PatrolType.HORIZONTAL,
+            		    100f,                    // speed
+            		    2.5f,                    // idle seconds
+            		    1 // sprite facing right
+            		);
+        		
+        		Enemy slime3 = new Enemy(
+            		    14* TILE, 9 * TILE,     // start
+            		    19 * TILE, 9 * TILE,     // end
+            		    16, 16,                 // sprite size
+            		    3,                      // scale
+            		    greenSlimeSheet,
+            		    4, 7,                   // idle frames
+            		    4, 7,                   // move frames
+            		    Enemy.PatrolType.HORIZONTAL,
+            		    100f,                    // speed
+            		    2.5f,                    // idle seconds
+            		    1 // sprite facing right
+            		);
 //        		
-//            enemies.add(slime);
-//            enemies.add(slime2);
+            enemies.add(slime);
+            enemies.add(slime2);
+            enemies.add(slime3);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -204,8 +238,10 @@ public class Level2State extends BaseLevelState{
 
     	int SCALE = 3;
 //    	
-//    	spikes.add(new Spike(7,9,16,16,spikeSprite));
-//    	spikes.add(new Spike(31,9,16,16,spikeSprite));
+    	spikes.add(new Spike(7,9,16,16,spikeSprite));
+    	spikes.add(new Spike(24,9,16,16,spikeSprite));
+    	spikes.add(new Spike(37,9,16,16,spikeSprite));
+    	spikes.add(new Spike(44,7,16,16,spikeSprite));
     	
     	platforms = new ArrayList<>();
 
@@ -236,18 +272,23 @@ public class Level2State extends BaseLevelState{
     	    throw new RuntimeException("platforms.png not found!");
     	}
 
-//    		platforms.add(
-//    		    new Platform(
-//    		        13, 7, 
-//    		        13, 7,
-//    		        32, 16,
-//    		        plat32,
-//    		        0f
-//    		    )
-//    		);    		
+    		platforms.add(
+    		    new Platform(
+    		        16, 7, 
+    		        16, 7,
+    		        32, 16,
+    		        plat32,
+    		        0f
+    		    )
+    		);    		
     		
     	List<int[]> coinPositions = new ArrayList<>();
-//    	coinPositions.add(new int[]{7 * 16 * 3, 6 * 16 * 3});
+    	coinPositions.add(new int[]{8 * 16 * 3, 9 * 16 * 3});
+    	coinPositions.add(new int[]{17 * 16 * 3, 5 * 16 * 3});
+    	coinPositions.add(new int[]{19 * 16 * 3, 9 * 16 * 3});
+    	coinPositions.add(new int[]{29 * 16 * 3, 5 * 16 * 3});
+    	coinPositions.add(new int[]{24 * 16 * 3, 8 * 16 * 3});
+    	coinPositions.add(new int[]{44 * 16 * 3, 6 * 16 * 3});
     	
     	// Add coins to the level
         addCoins(coinPositions, "/resources/sprites/coin.png"); 
@@ -259,52 +300,71 @@ public class Level2State extends BaseLevelState{
         if (tileset != null && tileset.length > 0) {
         	addTile(-2,10,0,1,true);
         	addTile(-1,10,0,1,true);
+        	addTile(-1,11,16,1,true);
+        	addTile(-1,12,16,1,true);
+        	addTile(-2,11,16,1,true);
         	
             // Ground at y=10
             for (int i = 1; i <= 10; i++) {
                 addTile(i, 10, 0, 1, true); // inherited method
+                addTile(i, 11, 16, 1, true); 
+                if(i>2) addTile(i,12,16,1,true);
+                if(i>7) addTile(i,13,16,1,true);
             }
             
             for (int i = 14; i <= 19; i++) {
                 addTile(i, 10, 0, 1, true); // inherited method
+                addTile(i, 11, 16, 1, true);
+                if(i>=16 && i <=17) addTile(i,12,16,1,true);
             }
             
-            for (int i = 28; i <= 33; i++) {
-                addTile(i, 10, 0, 1, true); // inherited method
+            for (int i = 23; i <= 39; i++) {
+            	if(i>=23 && i<=24) addTile(i, 10, 0, 1, true); // inherited method
+            	if(i>=34) addTile(i, 10, 0, 1, true); // inherited method
+            	
+                if(i>=26 && i<=32) addTile(i, 8, 0, 1, true); 
+                if(i>=26 && i<=32) addTile(i, 9, 16, 1, true);
+                if(i>=25 && i<=33) addTile(i, 10, 16, 1, true);
+                
+                if(i>=32) addTile(i, 11, 16, 1, true);
+            }
+            addTile(25,9,0,1,true);
+            addTile(33,9,0,1,true);
+            
+            for(int i=43;i<=45;i++) {
+            	addTile(i,8,0,16,true);
             }
             
-//            for (int i = 38; i <= 41; i++) {
-//                addTile(i, 10, 0, 1, true); // inherited method
-//            }
-            
-            addTile(46,9,0,1,true);
+            for(int i=49;i<=54;i++) {
+            	addTile(i,10,0,16,true);
+            }
             
           //BG
-//          for(int x=-10; x<20;x++) {
-//          	for(int y=5;y<15;y++) {
-//          		addTile(x,y,176,0,false);
-//          	}
-//          }
-////          
-//          for(int x=-10; x<20;x++) {
-//          	addTile(x,4,160,0,false);
-//          }
-////          
-//          for(int x=-10; x<20;x++) {
-//          	for(int y=16;y<18;y++) {
-//          		addTile(x,y,208,0,false);
-//          	}
-//          }
-////          
-//          for(int x=-10; x<20;x++) {
-//          	addTile(x,15 ,192 ,0,false);
-//          }
-//          
-//          for(int x=-40;x<50;x++) {
-//        	  for(int y=-20;y<4;y++) {
-//        		  addTile(x,y,144,0,false);
-//        	  }
-//          }
+            for(int x=-15; x<60;x++) {
+              	for(int y=13;y<25;y++) {
+              		addTile(x,y,240,0,false);
+              	}
+              }
+              
+              for(int x=-15; x<60;x++) {
+              	addTile(x,12,224,0,false);
+              }
+              
+              for(int x=-15; x<60;x++) {
+              	for(int y=5;y<12;y++) {
+              		addTile(x,y,208,0,false);
+              	}
+              }
+              
+              for(int x=-15; x<60;x++) {
+              	addTile(x,4,192 ,0,false);
+              }
+              
+              for(int x=-15; x<60;x++) {
+              	for(int y=-5;y<4;y++) {
+              		addTile(x,y,176,0,false);
+              	}
+              }
             
         }
         
