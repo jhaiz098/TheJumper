@@ -6,6 +6,8 @@ import java.awt.Graphics;
 public class GameStateManager {
     public static final int TITLE = 0;
     public static final int MAIN_MENU = 1;
+    public static final int HOW_TO_PLAY = 2;
+    public static final int CREDITS = 3;
     public static final int LEVEL_1 = 10;
     public static final int LEVEL_2 = 11;
     public static final int LEVEL_3 = 12;
@@ -27,6 +29,8 @@ public class GameStateManager {
             switch (id) {
                 case TITLE -> level = new TitleState(this);
                 case MAIN_MENU -> level = new MainMenuState(this);
+                case HOW_TO_PLAY -> level = new HowToPlayState(this);
+                case CREDITS -> level = new CreditsState(this);
                 case LEVEL_1 -> level = new Level1State(this);
                 case LEVEL_2 -> level = new Level2State(this);
                 case LEVEL_3 -> level = new Level3State(this);

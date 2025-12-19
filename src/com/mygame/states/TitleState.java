@@ -17,6 +17,8 @@ public class TitleState implements GameState {
     private final GameStateManager gsm;
     
     private Button playButton;
+    private Button howToPlayButton;
+    private Button creditsButton;
     private Button quitButton;
     
     private Sound music;
@@ -34,14 +36,23 @@ public class TitleState implements GameState {
         }
     	
     	BufferedImage playButtonSprite = null,
+    			howToPlayButtonSprite = null,
+    			creditsButtonSprite = null,
     			quitButtonSprite = null,
+    			
     			playHoveredButtonSprite = null,
+    			howToPlayHoveredButtonSprite = null,
+    			creditsHoveredButtonSprite = null,
     			quitHoveredButtonSprite = null;
         try {
         	playButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/playButton.png"));
+            howToPlayButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/howToPlayButton.png"));
+        	creditsButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/creditsButton.png"));
             quitButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/quitButton.png"));
 
             playHoveredButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/playButtonHovered.png"));
+            howToPlayHoveredButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/howToPlayButtonHovered.png"));
+            creditsHoveredButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/creditsButtonHovered.png"));
             quitHoveredButtonSprite = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/quitButtonHovered.png"));
             
             bgImage = ImageIO.read(getClass().getResourceAsStream("/resources/sprites/title_bg.png"));
@@ -50,13 +61,17 @@ public class TitleState implements GameState {
         }
         
         playButton = new Button(350, 300, playButtonSprite, playHoveredButtonSprite, 4);
-        quitButton = new Button(350, 380, quitButtonSprite, quitHoveredButtonSprite, 4);
+        howToPlayButton = new Button(350, 360, howToPlayButtonSprite, howToPlayHoveredButtonSprite, 4);
+        creditsButton = new Button(350, 420, creditsButtonSprite, creditsHoveredButtonSprite, 4);
+        quitButton = new Button(350, 480, quitButtonSprite, quitHoveredButtonSprite, 4);
         
     }
     
     @Override
     public void mouseMoved(int mx, int my) {
         playButton.updateHover(mx, my);
+        howToPlayButton.updateHover(mx, my);
+        creditsButton.updateHover(mx, my);
         quitButton.updateHover(mx, my);
     }
 
@@ -64,6 +79,14 @@ public class TitleState implements GameState {
     public void mousePressed(int mx, int my) {
         if (playButton.isClicked(mx, my)) {
         	gsm.setState(GameStateManager.MAIN_MENU);
+        	stopMusic();
+        }
+        if (howToPlayButton.isClicked(mx, my)) {
+        	gsm.setState(GameStateManager.HOW_TO_PLAY);
+        	stopMusic();
+        }
+        if (creditsButton.isClicked(mx, my)) {
+        	gsm.setState(GameStateManager.CREDITS);
         	stopMusic();
         }
         if (quitButton.isClicked(mx, my)) System.exit(0);
@@ -102,6 +125,8 @@ public class TitleState implements GameState {
         g.drawString("THE JUMPER", 150, 200);
         
         playButton.draw(g);
+        howToPlayButton.draw(g);
+        creditsButton.draw(g);
         quitButton.draw(g);
     }
 
